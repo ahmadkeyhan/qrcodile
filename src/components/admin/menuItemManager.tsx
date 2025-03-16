@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getCategories, getMenuItems, createMenuItem, updateMenuItem, deleteMenuItem } from "@/lib/data"
 import { formatCurrency } from "@/lib/utils"
 import { toast } from "@/components/ui/useToast"
+import mongoose from "mongoose"
 
 interface item {
     id: string,
@@ -65,6 +66,7 @@ export default function MenuItemManager() {
       const formattedItem = {
         ...newItem,
         price: Number.parseFloat(newItem.price),
+        _id: new mongoose.Types.ObjectId()
       }
       await createMenuItem(formattedItem)
       setNewItem({
@@ -107,7 +109,7 @@ export default function MenuItemManager() {
         //not sure about the id assignment
       const formattedItem = {
         ...editForm,
-        id: editingId,
+        _id: editingId,
         price: Number.parseFloat(editForm.price),
       }
       await updateMenuItem(editingId, formattedItem)

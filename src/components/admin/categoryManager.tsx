@@ -10,6 +10,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { getCategories, createCategory, updateCategory, deleteCategory } from "@/lib/data"
 import { toast } from "@/components/ui/useToast"
 
+import mongoose from "mongoose"
+
 interface category {
     id: string, 
     name: string, 
@@ -34,7 +36,10 @@ export default function CategoryManager() {
   const handleCreateSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      await createCategory(newCategory)
+      await createCategory({
+        ...newCategory,
+        _id: new mongoose.Types.ObjectId()
+      })
       setNewCategory({ name: "", description: "" })
       loadCategories()
       toast({
@@ -58,7 +63,7 @@ export default function CategoryManager() {
   const handleUpdateSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      await updateCategory(editingId, editForm)
+      await updateCategory(editingId, {...editForm, _id: editingId})
       setEditingId("")
       loadCategories()
       toast({
