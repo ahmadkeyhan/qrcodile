@@ -20,7 +20,7 @@ export async function getCategories() {
 export async function createCategory(categoryData: ICategory) {
   try {
     await connectToDatabase()
-    const newCategory = new Category(categoryData)
+    const newCategory = new Category({...categoryData,_id: new mongoose.Types.ObjectId()})
     await newCategory.save()
     return JSON.parse(JSON.stringify(newCategory))
   } catch (error) {
@@ -101,7 +101,7 @@ export async function getCategoryItems(categoryId:IMenuItem["categoryId"]) {
 export async function createMenuItem(itemData: IMenuItem) {
   try {
     await connectToDatabase()
-    const newItem = new MenuItem(itemData)
+    const newItem = new MenuItem({...itemData, _id: new mongoose.Types.ObjectId()})
     await newItem.save()
     return JSON.parse(JSON.stringify(newItem))
   } catch (error) {

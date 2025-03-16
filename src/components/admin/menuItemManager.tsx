@@ -65,8 +65,7 @@ export default function MenuItemManager() {
     try {
       const formattedItem = {
         ...newItem,
-        price: Number.parseFloat(newItem.price),
-        _id: new mongoose.Types.ObjectId()
+        price: Number.parseFloat(newItem.price)
       }
       await createMenuItem(formattedItem)
       setNewItem({

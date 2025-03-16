@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose"
 import mongoose from "mongoose"
 
 export interface ICategory {
-  _id: mongoose.Types.ObjectId | string
+  _id?: mongoose.Types.ObjectId | string
   name: string
   description?: string
   order?: number

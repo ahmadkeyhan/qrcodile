@@ -36,10 +36,7 @@ export default function CategoryManager() {
   const handleCreateSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      await createCategory({
-        ...newCategory,
-        _id: new mongoose.Types.ObjectId()
-      })
+      await createCategory(newCategory)
       setNewCategory({ name: "", description: "" })
       loadCategories()
       toast({
