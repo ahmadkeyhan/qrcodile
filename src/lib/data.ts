@@ -58,7 +58,7 @@ const categories = [
   ]
   
   // Helper function to generate IDs
-//   const generateId = () => Math.random().toString(36).substring(2, 9)
+  const generateId = () => Math.random().toString(36).substring(2, 9)
   
   // Category CRUD operations
   export async function getCategories() {
@@ -67,13 +67,13 @@ const categories = [
     return [...categories]
   }
   
-  export async function createCategory(categoryData:{id: string, name: string, description: string}) {
+  export async function createCategory(categoryData:{name: string, description: string}) {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    // const newCategory = {
-    //   id: generateId(),
-    //   ...categoryData,
-    // }
-    categories.push(categoryData)
+    const newCategory = {
+      id: generateId(),
+      ...categoryData,
+    }
+    categories.push(newCategory)
     return categoryData
   }
   
@@ -109,7 +109,6 @@ const categories = [
   }
   
   export async function createMenuItem(itemData:{
-    id: string,
     name: string,
     description: string,
     price: number,
@@ -118,11 +117,11 @@ const categories = [
     image: string,
   }) {
     await new Promise((resolve) => setTimeout(resolve, 500))
-    // const newItem = {
-    //   id: generateId(),
-    //   ...itemData,
-    // }
-    menuItems.push(itemData)
+    const newItem = {
+      id: generateId(),
+      ...itemData,
+    }
+    menuItems.push(newItem)
     return itemData
   }
   
