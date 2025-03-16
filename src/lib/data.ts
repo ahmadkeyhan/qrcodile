@@ -1,154 +1,144 @@
-// This is a mock data service that would be replaced with a real database in production
-// You could use Supabase, Firebase, or any other database service
+"use server"
 
-// In-memory storage
-const categories = [
-    { id: "1", name: "Coffee", description: "Hot and cold coffee beverages" },
-    { id: "2", name: "Tea", description: "Relaxing tea options" },
-    { id: "3", name: "Pastries", description: "Freshly baked goods" },
-    { id: "4", name: "Sandwiches", description: "Savory lunch options" },
-  ]
-  
-  let menuItems = [
-    {
-      id: "1",
-      name: "Cappuccino",
-      description: "Espresso with steamed milk and a deep layer of foam",
-      price: 4.5,
-      categoryId: "1",
-      ingredients: "Espresso, milk",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: "2",
-      name: "Latte",
-      description: "Espresso with steamed milk and a light layer of foam",
-      price: 4.75,
-      categoryId: "1",
-      ingredients: "Espresso, milk",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: "3",
-      name: "Earl Grey",
-      description: "Black tea with bergamot oil",
-      price: 3.5,
-      categoryId: "2",
-      ingredients: "Black tea, bergamot",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: "4",
-      name: "Croissant",
-      description: "Buttery, flaky pastry",
-      price: 3.25,
-      categoryId: "3",
-      ingredients: "Flour, butter, yeast",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-    {
-      id: "5",
-      name: "Avocado Toast",
-      description: "Sourdough toast with smashed avocado and seasonings",
-      price: 8.5,
-      categoryId: "4",
-      ingredients: "Sourdough bread, avocado, salt, pepper, olive oil",
-      image: "/placeholder.svg?height=80&width=80",
-    },
-  ]
-  
-  // Helper function to generate IDs
-  const generateId = () => Math.random().toString(36).substring(2, 9)
-  
-  // Category CRUD operations
-  export async function getCategories() {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    return [...categories]
+import connectToDatabase from "./mongodb"
+import { Category, ICategory } from "../models/Category"
+import { MenuItem, IMenuItem } from "../models/MenuItem"
+import mongoose from "mongoose"
+
+// Category CRUD operations
+export async function getCategories() {
+  try {
+    await connectToDatabase()
+    const categories = await Category.find().sort({ order: 1, name: 1 })
+    return JSON.parse(JSON.stringify(categories))
+  } catch (error) {
+    console.error("Error fetching categories:", error)
+    throw new Error("Failed to fetch categories")
   }
-  
-  export async function createCategory(categoryData:{name: string, description: string}) {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const newCategory = {
-      id: generateId(),
-      ...categoryData,
+}
+
+export async function createCategory(categoryData: ICategory) {
+  try {
+    await connectToDatabase()
+    const newCategory = new Category(categoryData)
+    await newCategory.save()
+    return JSON.parse(JSON.stringify(newCategory))
+  } catch (error) {
+    console.error("Error creating category:", error)
+    throw new Error("Failed to create category")
+  }
+}
+
+export async function updateCategory(id: string, categoryData: ICategory) {
+  try {
+    await connectToDatabase()
+    const category = await Category.findByIdAndUpdate(id, { $set: categoryData }, { new: true, runValidators: true })
+
+    if (!category) {
+      throw new Error("Category not found")
     }
-    categories.push(newCategory)
-    return categoryData
+
+    return JSON.parse(JSON.stringify(category))
+  } catch (error) {
+    console.error("Error updating category:", error)
+    throw new Error("Failed to update category")
   }
-  
-  export async function updateCategory(id: string, categoryData:{name: string, description: string}) {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = categories.findIndex((cat) => cat.id === id)
-    if (index === -1) throw new Error("Category not found")
-  
-    categories[index] = { ...categories[index], ...categoryData }
-    return categories[index]
-  }
-  
-  export async function deleteCategory(id: string) {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = categories.findIndex((cat) => cat.id === id)
-    if (index === -1) throw new Error("Category not found")
-  
-    categories.splice(index, 1)
-    // Also remove or update menu items in this category
-    menuItems = menuItems.filter((item) => item.categoryId !== id)
-    return { success: true }
-  }
-  
-  // Menu Item CRUD operations
-  export async function getMenuItems() {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    return [...menuItems]
-  }
-  
-  export async function getCategoryItems(categoryId: string) {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    return menuItems.filter((item) => item.categoryId === categoryId)
-  }
-  
-  export async function createMenuItem(itemData:{
-    name: string,
-    description: string,
-    price: number,
-    categoryId: string,
-    ingredients: string,
-    image: string,
-  }) {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const newItem = {
-      id: generateId(),
-      ...itemData,
+}
+
+export async function deleteCategory(id: string) {
+  try {
+    await connectToDatabase()
+    const session = await mongoose.startSession()
+    session.startTransaction()
+
+    try {
+      // Delete the category
+      const deletedCategory = await Category.findByIdAndDelete(id).session(session)
+      if (!deletedCategory) {
+        throw new Error("Category not found")
+      }
+
+      // Delete all menu items in this category
+      await MenuItem.deleteMany({ categoryId: id }).session(session)
+
+      await session.commitTransaction()
+      return { success: true }
+    } catch (error) {
+      await session.abortTransaction()
+      throw error
+    } finally {
+      session.endSession()
     }
-    menuItems.push(newItem)
-    return itemData
+  } catch (error) {
+    console.error("Error deleting category:", error)
+    throw new Error("Failed to delete category")
   }
-  
-  export async function updateMenuItem(id: string, itemData:{
-    id: string,
-    name: string,
-    description: string,
-    price: number,
-    categoryId: string,
-    ingredients: string,
-    image: string,
-  }) {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = menuItems.findIndex((item) => item.id === id)
-    if (index === -1) throw new Error("Menu item not found")
-  
-    menuItems[index] = { ...menuItems[index], ...itemData }
-    return menuItems[index]
+}
+
+// Menu Item CRUD operations
+export async function getMenuItems() {
+  try {
+    await connectToDatabase()
+    const menuItems = await MenuItem.find().sort({ name: 1 })
+    return JSON.parse(JSON.stringify(menuItems))
+  } catch (error) {
+    console.error("Error fetching menu items:", error)
+    throw new Error("Failed to fetch menu items")
   }
-  
-  export async function deleteMenuItem(id: string) {
-    await new Promise((resolve) => setTimeout(resolve, 500))
-    const index = menuItems.findIndex((item) => item.id === id)
-    if (index === -1) throw new Error("Menu item not found")
-  
-    menuItems.splice(index, 1)
+}
+
+export async function getCategoryItems(categoryId:IMenuItem["categoryId"]) {
+  try {
+    await connectToDatabase()
+    const items = await MenuItem.find({ categoryId }).sort({ name: 1 })
+    return JSON.parse(JSON.stringify(items))
+  } catch (error) {
+    console.error("Error fetching category items:", error)
+    throw new Error("Failed to fetch category items")
+  }
+}
+
+export async function createMenuItem(itemData: IMenuItem) {
+  try {
+    await connectToDatabase()
+    const newItem = new MenuItem(itemData)
+    await newItem.save()
+    return JSON.parse(JSON.stringify(newItem))
+  } catch (error) {
+    console.error("Error creating menu item:", error)
+    throw new Error("Failed to create menu item")
+  }
+}
+
+export async function updateMenuItem(id: string, itemData: IMenuItem) {
+  try {
+    await connectToDatabase()
+    const item = await MenuItem.findByIdAndUpdate(id, { $set: itemData }, { new: true, runValidators: true })
+
+    if (!item) {
+      throw new Error("Menu item not found")
+    }
+
+    return JSON.parse(JSON.stringify(item))
+  } catch (error) {
+    console.error("Error updating menu item:", error)
+    throw new Error("Failed to update menu item")
+  }
+}
+
+export async function deleteMenuItem(id: string) {
+  try {
+    await connectToDatabase()
+    const deletedItem = await MenuItem.findByIdAndDelete(id)
+
+    if (!deletedItem) {
+      throw new Error("Menu item not found")
+    }
+
     return { success: true }
+  } catch (error) {
+    console.error("Error deleting menu item:", error)
+    throw new Error("Failed to delete menu item")
   }
-  
-  
+}
+
