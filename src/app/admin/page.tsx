@@ -1,7 +1,10 @@
-import { Suspense } from "react"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+"use client"
 
+import { Suspense, useState, useEffect } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { signOut, useSession } from "next-auth/react"
+import { ArrowLeft, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -9,17 +12,53 @@ import CategoryManager from "@/components/admin/categoryManager"
 import MenuItemManager from "@/components/admin/menuItemManager"
 
 export default function AdminPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+
+    // Redirect if not authenticated
+    if (status === "unauthenticated") {
+      router.push("/login")
+    }
+  }, [status, router])
+  
+  // Don't render anything until we check authentication
+  if (!isClient || status === "loading") {
+    return <AdminSkeleton />
+  }
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false })
+    router.push("/")
+  }
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <div className="container px-4 py-6 mx-auto max-w-5xl">
-        <header className="flex items-center mb-8">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100">
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              Back to Menu
+        <header className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100">
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Back to Menu
+              </Button>
+            </Link>
+            <h1 className="text-2xl font-bold text-slate-900 ml-4">Menu Admin</h1>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {session?.user && (
+              <span className="text-sm text-slate-600">
+                Logged in as <span className="font-medium">{session.user.name}</span>
+              </span>
+            )}
+            <Button variant="outline" size="sm" onClick={handleLogout} className="text-slate-700">
+              <LogOut className="w-4 h-4 mr-1" />
+              Logout
             </Button>
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900 ml-4">Menu Admin</h1>
+          </div>
         </header>
 
         <Tabs defaultValue="items" className="space-y-6">
@@ -44,6 +83,21 @@ export default function AdminPage() {
         </Tabs>
       </div>
     </main>
+  )
+}
+
+function AdminSkeleton() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white p-6">
+      <div className="container mx-auto max-w-5xl">
+        <div className="flex justify-between items-center mb-8">
+          <Skeleton className="h-8 w-40" />
+          <Skeleton className="h-8 w-32" />
+        </div>
+        <Skeleton className="h-10 w-full max-w-md mx-auto mb-6" />
+        <Skeleton className="h-[600px] w-full" />
+      </div>
+    </div>
   )
 }
 
