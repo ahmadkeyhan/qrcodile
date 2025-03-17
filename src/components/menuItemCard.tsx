@@ -33,6 +33,7 @@ export default function MenuItemCard({ item } : {item:{
           alt={item.name}
           fill
           className="object-cover"
+          sizes="80px"
         />
         <motion.div
           className="absolute inset-0 bg-amber-500 mix-blend-overlay"
