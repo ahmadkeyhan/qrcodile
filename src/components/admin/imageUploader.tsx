@@ -119,10 +119,16 @@ export default function ImageUploader({ value, onChange, className = "" }: Image
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <div className="flex items-center gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={triggerFileInput} disabled={isUploading}>
-          {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
-          Upload Image
+      <div className="flex flex-row-reverse items-center gap-2">
+        <Button 
+          type="button" 
+          variant="outline" 
+          size="sm" 
+          className="flex flex-row-reverse gap-2"
+          onClick={triggerFileInput} 
+          disabled={isUploading}>
+          {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+          آپلود تصویر
         </Button>
 
         {displayUrl && (
@@ -132,10 +138,10 @@ export default function ImageUploader({ value, onChange, className = "" }: Image
             size="sm"
             onClick={handleRemoveImage}
             disabled={isUploading}
-            className="text-red-500 hover:text-red-700"
+            className="flex flex-row-reverse gap-2 text-red-500 hover:text-red-700"
           >
-            <X className="h-4 w-4 mr-2" />
-            Remove
+            <X className="h-4 w-4" />
+            حذف
           </Button>
         )}
 
