@@ -301,7 +301,7 @@ export default function MenuItemManager() {
                   </div>
                 </form>
               ) : (
-                <div className="p-4 flex flex-row-reverse justify-between items-center">
+                <div className="p-4 flex flex-row-reverse gap-4 items-center">
                   {item.image ? (
                     <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
                       <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" sizes="80" />
@@ -311,7 +311,7 @@ export default function MenuItemManager() {
                       <span className="text-slate-400 text-xs">No image</span>
                     </div>
                   )}
-                  <div className="flex flex-col w-3/4 gap-2">
+                  <div className="flex flex-col w-full gap-2">
                     <div className="flex flex-row-reverse justify-between items-start">
                       <h3 className="font-medium">{item.name}</h3>
                       <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
@@ -323,13 +323,13 @@ export default function MenuItemManager() {
                       </span>
                       {item.ingredients && <span className="text-xs text-slate-400">{item.ingredients}</span>}
                     </div>
-                    <div className="flex flex-row-reverse mr-2 -ml-2">
-                      <Button variant="ghost" size="sm" onClick={() => handleEditClick(item)}>
+                    <div className="flex flex-row-reverse justify-end gap-2">
+                      <Button variant="outline" size="sm" onClick={() => handleEditClick(item)}>
                         <Edit className="w-4 h-4" />
                         <span className="sr-only">ویرایش</span>
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(item.id, item.name)}>
-                        <Trash2 className="w-4 h-4 text-red-500 hover:text-red-700" />
+                      <Button variant="outline" size="sm" className="group hover:bg-red-500" onClick={() => handleDeleteClick(item.id, item.name)}>
+                        <Trash2 className="w-4 h-4 text-red-500 group-hover:text-red-50" />
                         <span className="sr-only">حذف</span>
                       </Button>
                     </div>
