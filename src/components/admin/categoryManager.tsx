@@ -118,7 +118,7 @@ export default function CategoryManager() {
           </div>
         </div>
         <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4" />
           افزودن دسته‌بندی
         </Button>
       </form>
