@@ -147,7 +147,7 @@ export default function CategoryManager() {
                       />
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-row-reverse justify-end gap-2">
                     <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
                       <Save className="w-4 h-4 mr-2" />
                       ذخیره
@@ -159,12 +159,12 @@ export default function CategoryManager() {
                   </div>
                 </form>
               ) : (
-                <div className="p-4 flex justify-between items-center">
-                  <div>
+                <div className="p-4 flex flex-row-reverse justify-between items-center">
+                  <div className="flex flex-col w-3/4 gap-2">
                     <h3 className="font-medium">{category.name}</h3>
                     {category.description && <p className="text-sm text-slate-500">{category.description}</p>}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-row-reverse mr-2 -ml-2">
                     <Button variant="ghost" size="sm" onClick={() => handleEditClick(category)}>
                       <Edit className="w-4 h-4" />
                       <span className="sr-only">ویرایش</span>

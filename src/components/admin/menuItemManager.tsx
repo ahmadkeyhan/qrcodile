@@ -284,7 +284,7 @@ export default function MenuItemManager() {
                       </Select>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-row-reverse justify-end gap-2">
                     <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
                       <Save className="w-4 h-4 mr-2" />
                       ذخیره
@@ -296,21 +296,21 @@ export default function MenuItemManager() {
                   </div>
                 </form>
               ) : (
-                <div className="p-4 flex justify-between items-center">
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
+                <div className="p-4 flex flex-row-reverse justify-between items-center">
+                  <div className="flex flex-col w-3/4 gap-2">
+                    <div className="flex flex-row-reverse justify-between items-start">
                       <h3 className="font-medium">{item.name}</h3>
                       <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
                     </div>
-                    <p className="text-sm text-slate-500 line-clamp-1">{item.description}</p>
-                    <div className="flex items-center gap-2 mt-1">
+                    <p className="text-sm text-slate-500 text-right">{item.description}</p>
+                    <div className="flex flex-row-reverse items-center gap-2 mt-1">
                       <span className="text-xs px-2 py-0.5 bg-slate-100 rounded-full">
                         {categories.find((c) => c.id === item.categoryId)?.name || "Uncategorized"}
                       </span>
-                      {item.ingredients && <span className="text-xs text-slate-400 truncate">{item.ingredients}</span>}
+                      {item.ingredients && <span className="text-xs text-slate-400">{item.ingredients}</span>}
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-4">
+                  <div className="flex flex-row-reverse mr-2 -ml-2">
                     <Button variant="ghost" size="sm" onClick={() => handleEditClick(item)}>
                       <Edit className="w-4 h-4" />
                       <span className="sr-only">ویرایش</span>

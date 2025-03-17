@@ -62,7 +62,7 @@ export default function AdminPage() {
         </header>
 
         <Tabs defaultValue="items" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+          <TabsList className="inline-flex w-ful max-w-md mx-auto">
             <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             <TabsTrigger value="categories">دسته‌بندی‌ها</TabsTrigger>
           </TabsList>
