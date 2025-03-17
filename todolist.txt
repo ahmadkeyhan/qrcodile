@@ -19,3 +19,9 @@ option2 : direct client to initialize mongodb cluster and manage api key and sec
 8- Landing page!
 
 9- fix nextAuth admin page flickering
+
+10- add change password option for admin
+
+11- admin can add users with employee role
+
+12- define the employee and admin role autherizations
