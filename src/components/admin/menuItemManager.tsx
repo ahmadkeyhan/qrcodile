@@ -304,7 +304,7 @@ export default function MenuItemManager() {
                 <div className="p-4 flex flex-row-reverse justify-between items-center">
                   {item.image ? (
                     <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
-                      <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                      <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" sizes="80" />
                     </div>
                   ) : (
                     <div className="h-20 w-20 rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0">
