@@ -35,7 +35,7 @@ export default function AdminPage() {
     router.push("/")
   }
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
       <div className="container px-4 py-6 mx-auto max-w-5xl">
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center">
