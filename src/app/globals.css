@@ -1,8 +1,10 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 220 25% 97%;
     --foreground: 20 14.3% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 20 14.3% 4.1%;
@@ -48,12 +50,12 @@
 }
 
 @layer base {
-  /* * {
+  * {
     @apply border-border;
-  } */
-  /* body {
+  }
+  body {
     @apply bg-background text-foreground;
-  } */
+  }
 }
 
 
@@ -71,6 +73,9 @@
 
 html {
   font-family: var(--font-vazir);
+  /* unicode-bidi: bidi-override !important; */
+  /* direction: unset !important; */
+  text-align:right;
 }
 
 h1 {
