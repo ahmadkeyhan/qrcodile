@@ -78,12 +78,12 @@ export default function MenuItemManager() {
       })
       loadData()
       toast({
-        title: "Menu item created",
-        description: `${newItem.name} has been added to your menu.`,
+        title: "آیتم ایجاد شد!",
+        description: `${newItem.name} به منو اضافه شد.`,
       })
     } catch (error: any) {
       toast({
-        title: "Error creating menu item",
+        title: "خطا در ایجاد آیتم!",
         description: error.message,
         variant: "destructive",
       })
@@ -115,12 +115,12 @@ export default function MenuItemManager() {
       setEditingId("")
       loadData()
       toast({
-        title: "Menu item updated",
-        description: `${editForm.name} has been updated.`,
+        title: "آیتم به‌روزرسانی شد!",
+        description: `${editForm.name} به‌روزرسانی شد.`,
       })
     } catch (error: any) {
       toast({
-        title: "Error updating menu item",
+        title: "خطا در به‌روزرسانی آیتم!",
         description: error.message,
         variant: "destructive",
       })
@@ -128,17 +128,17 @@ export default function MenuItemManager() {
   }
 
   const handleDeleteClick = async (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+    if (window.confirm(`از حذف "${name}" مطمئنید؟`)) {
       try {
         await deleteMenuItem(id)
         loadData()
         toast({
-          title: "Menu item deleted",
-          description: `${name} has been removed from your menu.`,
+          title: "آیتم حذف شد!",
+          description: `${name} از منو حذف شد.`,
         })
       } catch (error: any) {
         toast({
-          title: "Error deleting menu item",
+          title: "خطا در حذف آیتم!",
           description: error.message,
           variant: "destructive",
         })
@@ -149,11 +149,11 @@ export default function MenuItemManager() {
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
-        <h3 className="font-medium">Add New Menu Item</h3>
+        <h3 className="font-medium">افزودن آیتم‌ جدید</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Input
-              placeholder="Item Name"
+              placeholder="عنوان آیتم"
               value={newItem.name}
               onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
               required
@@ -161,7 +161,7 @@ export default function MenuItemManager() {
           </div>
           <div>
             <Input
-              placeholder="Price"
+              placeholder="قیمت"
               type="number"
               step="0.01"
               min="0"
@@ -172,7 +172,7 @@ export default function MenuItemManager() {
           </div>
           <div className="sm:col-span-2">
             <Textarea
-              placeholder="Description"
+              placeholder="توضیحات"
               value={newItem.description}
               onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
               required
@@ -180,14 +180,14 @@ export default function MenuItemManager() {
           </div>
           <div>
             <Input
-              placeholder="Ingredients (optional)"
+              placeholder="مواد تشکیل دهنده (اختیاری)"
               value={newItem.ingredients}
               onChange={(e) => setNewItem({ ...newItem, ingredients: e.target.value })}
             />
           </div>
           <div>
             <Input
-              placeholder="Image URL (optional)"
+              placeholder="آدرس تصویر (اختیاری)"
               value={newItem.image}
               onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
             />
@@ -199,7 +199,7 @@ export default function MenuItemManager() {
               required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select Category" />
+                <SelectValue placeholder="انتخاب دسته‌بندی" />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
@@ -213,7 +213,7 @@ export default function MenuItemManager() {
         </div>
         <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
           <Plus className="w-4 h-4 mr-2" />
-          Add Menu Item
+          افزودن آیتم به منو
         </Button>
       </form>
 
@@ -226,7 +226,7 @@ export default function MenuItemManager() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <Input
-                        placeholder="Item Name"
+                        placeholder="عنوان آیتم"
                         value={editForm.name}
                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                         required
@@ -234,7 +234,7 @@ export default function MenuItemManager() {
                     </div>
                     <div>
                       <Input
-                        placeholder="Price"
+                        placeholder="قیمت"
                         type="number"
                         step="0.01"
                         min="0"
@@ -245,7 +245,7 @@ export default function MenuItemManager() {
                     </div>
                     <div className="sm:col-span-2">
                       <Textarea
-                        placeholder="Description"
+                        placeholder="توضیحات"
                         value={editForm.description}
                         onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                         required
@@ -253,14 +253,14 @@ export default function MenuItemManager() {
                     </div>
                     <div>
                       <Input
-                        placeholder="Ingredients (optional)"
+                        placeholder="مواد تشکیل دهنده (اختیاری)"
                         value={editForm.ingredients}
                         onChange={(e) => setEditForm({ ...editForm, ingredients: e.target.value })}
                       />
                     </div>
                     <div>
                       <Input
-                        placeholder="Image URL (optional)"
+                        placeholder="آدرس تصویر (اختیاری)"
                         value={editForm.image}
                         onChange={(e) => setEditForm({ ...editForm, image: e.target.value })}
                       />
@@ -272,7 +272,7 @@ export default function MenuItemManager() {
                         required
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select Category" />
+                          <SelectValue placeholder="انتخاب دسته‌بندی" />
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((category) => (
@@ -287,11 +287,11 @@ export default function MenuItemManager() {
                   <div className="flex gap-2">
                     <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
                       <Save className="w-4 h-4 mr-2" />
-                      Save
+                      ذخیره
                     </Button>
                     <Button type="button" variant="outline" size="sm" onClick={() => setEditingId("")}>
                       <X className="w-4 h-4 mr-2" />
-                      Cancel
+                      لغو
                     </Button>
                   </div>
                 </form>
@@ -313,11 +313,11 @@ export default function MenuItemManager() {
                   <div className="flex gap-2 ml-4">
                     <Button variant="ghost" size="sm" onClick={() => handleEditClick(item)}>
                       <Edit className="w-4 h-4" />
-                      <span className="sr-only">Edit</span>
+                      <span className="sr-only">ویرایش</span>
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(item.id, item.name)}>
                       <Trash2 className="w-4 h-4 text-red-500" />
-                      <span className="sr-only">Delete</span>
+                      <span className="sr-only">حذف</span>
                     </Button>
                   </div>
                 </div>

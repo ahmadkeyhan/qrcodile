@@ -40,12 +40,12 @@ export default function CategoryManager() {
       setNewCategory({ name: "", description: "" })
       loadCategories()
       toast({
-        title: "Category created",
-        description: `${newCategory.name} has been added to your menu.`,
+        title: "دسته‌بندی‌ ایجاد شد!",
+        description: `${newCategory.name} به منو اضافه شد.`,
       })
     } catch (error: any) {
       toast({
-        title: "Error creating category",
+        title: "خطا در ایجاد دسته‌بندی‌!",
         description: error.message,
         variant: "destructive",
       })
@@ -64,12 +64,12 @@ export default function CategoryManager() {
       setEditingId("")
       loadCategories()
       toast({
-        title: "Category updated",
-        description: `${editForm.name} has been updated.`,
+        title: "دسته‌بندی‌ به‌روزرسانی شد!",
+        description: `${editForm.name} به‌روزرسانی شد.`,
       })
     } catch (error: any) {
       toast({
-        title: "Error updating category",
+        title: "خطا در به‌روزرسانی دسته‌بندی‌!",
         description: error.message,
         variant: "destructive",
       })
@@ -77,17 +77,17 @@ export default function CategoryManager() {
   }
 
   const handleDeleteClick = async (id: string, name: string) => {
-    if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
+    if (window.confirm(`از حذف "${name}" مطمئنید؟`)) {
       try {
         await deleteCategory(id)
         loadCategories()
         toast({
-          title: "Category deleted",
-          description: `${name} has been removed from your menu.`,
+          title: "دسته‌بندی‌ حذف شد!",
+          description: `${name} از منو حذف شد.`,
         })
       } catch (error: any) {
         toast({
-          title: "Error deleting category",
+          title: "خطا در حذف دسته‌بندی‌!",
           description: error.message,
           variant: "destructive",
         })
@@ -98,11 +98,11 @@ export default function CategoryManager() {
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
-        <h3 className="font-medium">Add New Category</h3>
+        <h3 className="font-medium">افزودن دسته‌بندی جدید</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Input
-              placeholder="Category Name"
+              placeholder="عنوان دسته‌بندی"
               value={newCategory.name}
               onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
               required
@@ -110,7 +110,7 @@ export default function CategoryManager() {
           </div>
           <div>
             <Textarea
-              placeholder="Description (optional)"
+              placeholder="توضیحات (اختیاری)"
               value={newCategory.description}
               onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
               className="h-10"
@@ -119,7 +119,7 @@ export default function CategoryManager() {
         </div>
         <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
           <Plus className="w-4 h-4 mr-2" />
-          Add Category
+          افزودن دسته‌بندی
         </Button>
       </form>
 
@@ -132,7 +132,7 @@ export default function CategoryManager() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
                       <Input
-                        placeholder="Category Name"
+                        placeholder="عنوان دسته‌بندی"
                         value={editForm.name}
                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                         required
@@ -140,7 +140,7 @@ export default function CategoryManager() {
                     </div>
                     <div>
                       <Textarea
-                        placeholder="Description (optional)"
+                        placeholder="توضیحات (اختیاری)"
                         value={editForm.description}
                         onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                         className="h-10"
@@ -150,11 +150,11 @@ export default function CategoryManager() {
                   <div className="flex gap-2">
                     <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
                       <Save className="w-4 h-4 mr-2" />
-                      Save
+                      ذخیره
                     </Button>
                     <Button type="button" variant="outline" size="sm" onClick={() => setEditingId("")}>
                       <X className="w-4 h-4 mr-2" />
-                      Cancel
+                      لغو
                     </Button>
                   </div>
                 </form>
@@ -167,11 +167,11 @@ export default function CategoryManager() {
                   <div className="flex gap-2">
                     <Button variant="ghost" size="sm" onClick={() => handleEditClick(category)}>
                       <Edit className="w-4 h-4" />
-                      <span className="sr-only">Edit</span>
+                      <span className="sr-only">ویرایش</span>
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(category.id, category.name)}>
                       <Trash2 className="w-4 h-4 text-red-500" />
-                      <span className="sr-only">Delete</span>
+                      <span className="sr-only">حذف</span>
                     </Button>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import Link from "next/link"
-import { Coffee, ChevronRight } from "lucide-react"
+import { Coffee, ChevronLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import MenuCategories from "@/components/menuCategories"
@@ -13,20 +13,20 @@ export default function Home() {
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
             <Coffee className="w-8 h-8 text-amber-600" />
-            <h1 className="text-2xl font-bold text-amber-900">Cafe Menu</h1>
+            <h1 className="text-lل font-bold text-amber-900">کافه کروکودیل</h1>
           </div>
           <Link href="/admin">
             <Button variant="ghost" size="sm" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100">
-              Admin
-              <ChevronRight className="w-4 h-4 ml-1" />
+              ادمین
+              <ChevronLeft className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </header>
 
         <section className="space-y-6">
-          <h2 className="text-3xl font-bold text-center text-amber-900">Our Delicious Menu</h2>
+          <h1 className="text-3xl font-bold text-center text-amber-900">منوی کافه</h1>
           <p className="text-center text-amber-700 max-w-md mx-auto">
-            Explore our carefully crafted selection of drinks and treats, made with love and the finest ingredients.
+          مجموعه‌ای از نوشیدنی‌ها و خوراکی‌های ما را که با عشق و بهترین مواد اولیه درست شده‌اند، کاوش کنید.
           </p>
 
           <Suspense fallback={<MenuSkeleton />}>

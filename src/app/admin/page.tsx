@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
-import { ArrowLeft, LogOut } from "lucide-react"
+import { LogOut, ListTodo } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -40,42 +40,42 @@ export default function AdminPage() {
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center">
             <Link href="/">
-              <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100">
-                <ArrowLeft className="w-4 h-4 mr-1" />
-                Back to Menu
+              <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100 flex gap-2">
+                <ListTodo className="w-4 h-4 mr-1" />
+                نمایش منو
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold text-slate-900 ml-4">Menu Admin</h1>
+            {/* <h1 className="text-2xl font-bold text-slate-900 ml-4">Menu Admin</h1> */}
           </div>
 
           <div className="flex items-center gap-4">
             {session?.user && (
               <span className="text-sm text-slate-600">
-                Logged in as <span className="font-medium">{session.user.name}</span>
+                {session.user.name}
               </span>
             )}
             <Button variant="outline" size="sm" onClick={handleLogout} className="text-slate-700">
               <LogOut className="w-4 h-4 mr-1" />
-              Logout
+              خروج
             </Button>
           </div>
         </header>
 
         <Tabs defaultValue="items" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-            <TabsTrigger value="items">Menu Items</TabsTrigger>
-            <TabsTrigger value="categories">Categories</TabsTrigger>
+            <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
+            <TabsTrigger value="categories">دسته‌بندی‌ها</TabsTrigger>
           </TabsList>
 
           <TabsContent value="items" className="space-y-6">
-            <h2 className="text-xl font-semibold text-slate-900">Manage Menu Items</h2>
+            <h1 className="text-xl font-semibold text-slate-900">مدیریت آیتم‌ها</h1>
             <Suspense fallback={<ItemsSkeleton />}>
               <MenuItemManager />
             </Suspense>
           </TabsContent>
 
           <TabsContent value="categories" className="space-y-6">
-            <h2 className="text-xl font-semibold text-slate-900">Manage Categories</h2>
+            <h1 className="text-xl font-semibold text-slate-900">مدیریت دسته‌بندی‌ها</h1>
             <Suspense fallback={<CategoriesSkeleton />}>
               <CategoryManager />
             </Suspense>
