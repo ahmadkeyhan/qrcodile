@@ -1,6 +1,6 @@
 import { Suspense } from "react"
 import Link from "next/link"
-import { Coffee, ChevronLeft } from "lucide-react"
+import { Coffee, UserCogIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import MenuCategories from "@/components/menuCategories"
@@ -16,9 +16,9 @@ export default function Home() {
             <h1 className="text-lل font-bold text-amber-900">کافه کروکودیل</h1>
           </div>
           <Link href="/admin">
-            <Button variant="ghost" size="sm" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100">
+            <Button variant="outline" size="sm" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100">
               ادمین
-              <ChevronLeft className="w-4 h-4 ml-1" />
+              <UserCogIcon className="w-4 h-4" />
             </Button>
           </Link>
         </header>

@@ -164,13 +164,13 @@ export default function CategoryManager() {
                     <h3 className="font-medium">{category.name}</h3>
                     {category.description && <p className="text-sm text-slate-500">{category.description}</p>}
                   </div>
-                  <div className="flex flex-row-reverse mr-2 -ml-2">
-                    <Button variant="ghost" size="sm" onClick={() => handleEditClick(category)}>
+                  <div className="flex flex-row-reverse gap-2">
+                    <Button variant="outline" size="sm" className="bg-background hover:bg-white" onClick={() => handleEditClick(category)}>
                       <Edit className="w-4 h-4" />
                       <span className="sr-only">ویرایش</span>
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteClick(category.id, category.name)}>
-                      <Trash2 className="w-4 h-4 text-red-500" />
+                    <Button variant="outline" size="sm" className="group bg-background hover:bg-red-500" onClick={() => handleDeleteClick(category.id, category.name)}>
+                      <Trash2 className="w-4 h-4 text-red-500 group-hover:text-red-50" />
                       <span className="sr-only">حذف</span>
                     </Button>
                   </div>

@@ -40,9 +40,9 @@ export default function AdminPage() {
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center">
             <Link href="/">
-              <Button variant="ghost" size="sm" className="text-slate-700 hover:text-slate-900 hover:bg-slate-100 flex gap-2">
-                <ListTodo className="w-4 h-4 mr-1" />
+              <Button variant="outline" size="sm">
                 نمایش منو
+                <ListTodo className="w-4 h-4" />
               </Button>
             </Link>
             {/* <h1 className="text-2xl font-bold text-slate-900 ml-4">Menu Admin</h1> */}
@@ -55,8 +55,8 @@ export default function AdminPage() {
               </span>
             )}
             <Button variant="outline" size="sm" onClick={handleLogout} className="text-slate-700">
-              <LogOut className="w-4 h-4 mr-1" />
               خروج
+              <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </header>

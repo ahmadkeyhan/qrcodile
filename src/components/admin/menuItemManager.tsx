@@ -217,8 +217,8 @@ export default function MenuItemManager() {
             <ImageUploader value={newItem.image} onChange={(url) => setNewItem({ ...newItem, image: url })} />
           </div>
         </div>
-        <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
-          <Plus className="w-4 h-4 mr-2" />
+        <Button type="submit" className="bg-amber-500 hover:bg-amber-600 ">
+          <Plus className="w-4 h-4" />
           افزودن آیتم به منو
         </Button>
       </form>
@@ -291,11 +291,11 @@ export default function MenuItemManager() {
                   </div>
                   <div className="flex flex-row-reverse justify-end gap-2">
                     <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
-                      <Save className="w-4 h-4 mr-2" />
+                      <Save className="w-4 h-4" />
                       ذخیره
                     </Button>
                     <Button type="button" variant="outline" size="sm" onClick={() => setEditingId("")}>
-                      <X className="w-4 h-4 mr-2" />
+                      <X className="w-4 h-4" />
                       لغو
                     </Button>
                   </div>
@@ -324,11 +324,18 @@ export default function MenuItemManager() {
                       {item.ingredients && <span className="text-xs text-slate-400">{item.ingredients}</span>}
                     </div>
                     <div className="flex flex-row-reverse justify-end gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleEditClick(item)}>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="bg-background hover:bg-white"
+                        onClick={() => handleEditClick(item)}>
                         <Edit className="w-4 h-4" />
                         <span className="sr-only">ویرایش</span>
                       </Button>
-                      <Button variant="outline" size="sm" className="group hover:bg-red-500" onClick={() => handleDeleteClick(item.id, item.name)}>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="group bg-background hover:bg-red-500" onClick={() => handleDeleteClick(item.id, item.name)}>
                         <Trash2 className="w-4 h-4 text-red-500 group-hover:text-red-50" />
                         <span className="sr-only">حذف</span>
                       </Button>
