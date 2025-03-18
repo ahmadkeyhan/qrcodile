@@ -76,24 +76,21 @@ export async function deleteCategory(id: string) {
 }
 
 export async function reorderCategories(orderedIds: string[]) {
+  console.log(orderedIds)
   try {
-    const response = await fetch("/api/categories/reorder", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ orderedIds }),
+    await connectToDatabase()
+
+    // Update each category with its new order
+    const updatePromises = orderedIds.map((id, index) => {
+      return Category.findByIdAndUpdate(id, { order: index })
     })
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to reorder categories")
-    }
+    await Promise.all(updatePromises)
 
-    return await response.json()
+    return { success: true, message: "Categories reordered successfully" }
   } catch (error) {
     console.error("Error reordering categories:", error)
-    throw error
+    throw new Error("Failed to reorder categories")
   }
 }
 
