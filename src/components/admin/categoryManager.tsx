@@ -99,8 +99,8 @@ export default function CategoryManager() {
     <div className="space-y-6">
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
         <h3 className="font-medium">افزودن دسته‌بندی جدید</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
+        <div className="flex flex-grow w-full gap-4 flex-col sm:flex-row-reverse">
+          <div className="w-full">
             <Input
               placeholder="عنوان دسته‌بندی"
               value={newCategory.name}
@@ -108,7 +108,7 @@ export default function CategoryManager() {
               required
             />
           </div>
-          <div>
+          <div className="w-full">
             <Textarea
               placeholder="توضیحات (اختیاری)"
               value={newCategory.description}

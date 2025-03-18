@@ -79,7 +79,7 @@ export default function MenuItemManager() {
         ingredients: "",
         image: "",
       })
-      loadData()
+      await loadData()
       toast({
         title: "آیتم ایجاد شد!",
         description: `${newItem.name} به منو اضافه شد.`,
@@ -160,8 +160,8 @@ export default function MenuItemManager() {
     <div className="space-y-6">
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
         <h3 className="font-medium">افزودن آیتم‌ جدید</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
+        <div className="flex flex-col w-full flex-grow gap-4 sm:flex-row-reverse sm:flex-wrap">
+          <div className="sm:w-[calc(50%-0.5rem)]">
             <Input
               placeholder="عنوان آیتم"
               value={newItem.name}
@@ -169,7 +169,7 @@ export default function MenuItemManager() {
               required
             />
           </div>
-          <div>
+          <div className="sm:w-[calc(50%-0.5rem)]">
             <Input
               placeholder="قیمت"
               type="number"
@@ -180,7 +180,7 @@ export default function MenuItemManager() {
               required
             />
           </div>
-          <div className="sm:col-span-2">
+          <div className="sm:w-[calc(50%-0.5rem)]">
             <Textarea
               placeholder="توضیحات"
               value={newItem.description}
@@ -188,14 +188,14 @@ export default function MenuItemManager() {
               required
             />
           </div>
-          <div>
+          <div className="sm:w-[calc(50%-0.5rem)]">
             <Input
               placeholder="مواد تشکیل دهنده (اختیاری)"
               value={newItem.ingredients}
               onChange={(e) => setNewItem({ ...newItem, ingredients: e.target.value })}
             />
           </div>
-          <div className="sm:col-span-2">
+          <div className="sm:w-[calc(50%-0.5rem)]">
             <Select
               value={newItem.categoryId}
               onValueChange={(value) => setNewItem({ ...newItem, categoryId: value })}
@@ -214,7 +214,7 @@ export default function MenuItemManager() {
             </Select>
           </div>
           <div className="sm:col-span-2">
-            <ImageUploader value={newItem.image} onChange={(url) => setNewItem({ ...newItem, image: url })} />
+            <ImageUploader key={`new-item-uploader-${newItem.image}`} value={newItem.image} onChange={(url) => setNewItem({ ...newItem, image: url })} />
           </div>
         </div>
         <Button type="submit" className="bg-amber-500 hover:bg-amber-600 ">
