@@ -6,7 +6,7 @@ option2 : direct client to open cloudinary account and manage api key and secret
 option1 : make a collection for each client, then when quota reached(low odds), upgrade plan
 option2 : direct client to initialize mongodb cluster and manage api key and secret key (hard for non dev)
 
-3-reordering categories and items using drag n drop reorder packages
+3-reordering items using drag n drop reorder packages
 
 4-add a feature for admin to choose among menuItem showcase options
 
@@ -14,7 +14,7 @@ option2 : direct client to initialize mongodb cluster and manage api key and sec
 
 6-terminate seed datas before production build
 
-7-build two demo UIs : Rango, Qrocodil
+7-build 3 demo UIs : Dino, Rango, Croco
 
 8- Landing page!
 
