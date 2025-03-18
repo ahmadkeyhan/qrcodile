@@ -1,21 +1,42 @@
 "use client"
 
+import React from "react"
 import { useState, useEffect, FormEvent } from "react"
-import { Plus, Edit, Trash2, Save, X } from "lucide-react"
-
+import { Plus, Save, X } from "lucide-react"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import { 
+  arrayMove, 
+  SortableContext, 
+  sortableKeyboardCoordinates, 
+  verticalListSortingStrategy 
+} from "@dnd-kit/sortable"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textArea"
 import { Card, CardContent } from "@/components/ui/card"
-import { getCategories, createCategory, updateCategory, deleteCategory } from "@/lib/data"
+import { 
+  getCategories, 
+  createCategory, 
+  updateCategory, 
+  deleteCategory, 
+  reorderCategories 
+} from "@/lib/data"
 import { toast } from "@/components/ui/useToast"
-
-import mongoose from "mongoose"
+import SortableCategoryItem from "./sortableCategoryItem"
 
 interface category {
     id: string, 
     name: string, 
-    description: string
+    description: string,
+    order: number
 }
 
 export default function CategoryManager() {
@@ -23,6 +44,19 @@ export default function CategoryManager() {
   const [newCategory, setNewCategory] = useState({ name: "", description: "" })
   const [editingId, setEditingId] = useState<string>("")
   const [editForm, setEditForm] = useState({ name: "", description: "" })
+  const [isReordering, setIsReordering] = useState(false)
+
+  // Set up sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px movement required before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
 
   useEffect(() => {
     loadCategories()
@@ -30,13 +64,15 @@ export default function CategoryManager() {
 
   const loadCategories = async () => {
     const data = await getCategories()
+    data.sort((a: category, b: category) => (a.order || 0) - (b.order || 0))
     setCategories(data)
   }
 
   const handleCreateSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
-      await createCategory(newCategory)
+       // Set order to be the last item
+      await createCategory({...newCategory,order: categories.length})
       setNewCategory({ name: "", description: "" })
       loadCategories()
       toast({
@@ -95,6 +131,48 @@ export default function CategoryManager() {
     }
   }
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      setIsReordering(true)
+
+      try {
+        // Calculate the new order of categories
+        const oldIndex = categories.findIndex((item) => item.id === active.id)
+        const newIndex = categories.findIndex((item) => item.id === over.id)
+
+        // Create the new array with the updated order
+        const updatedCategories = arrayMove([...categories], oldIndex, newIndex)
+
+        // Update the local state for immediate feedback
+        setCategories(updatedCategories)
+
+        // Get the ordered IDs from the updated array
+        const orderedIds = updatedCategories.map((category) => category.id)
+
+        // Save the new order to the database
+        await reorderCategories(orderedIds)
+
+        toast({
+          title: "Categories reordered",
+          description: "The order of categories has been updated.",
+        })
+      } catch (error: any) {
+        // If there's an error, reload the original order
+        loadCategories()
+
+        toast({
+          title: "Error reordering categories",
+          description: error.message || "Failed to update category order",
+          variant: "destructive",
+        })
+      } finally {
+        setIsReordering(false)
+      }
+    }
+  }
+
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
@@ -122,63 +200,61 @@ export default function CategoryManager() {
           افزودن دسته‌بندی
         </Button>
       </form>
-
       <div className="space-y-4">
-        {categories.map((category) => (
-          <Card key={category.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              {editingId === category.id ? (
-                <form onSubmit={handleUpdateSubmit} className="p-4 space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <Input
-                        placeholder="عنوان دسته‌بندی"
-                        value={editForm.name}
-                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Textarea
-                        placeholder="توضیحات (اختیاری)"
-                        value={editForm.description}
-                        onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                        className="h-10"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-row-reverse justify-end gap-2">
-                    <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
-                      <Save className="w-4 h-4 mr-2" />
-                      ذخیره
-                    </Button>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setEditingId("")}>
-                      <X className="w-4 h-4 mr-2" />
-                      لغو
-                    </Button>
-                  </div>
-                </form>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={categories.map((cat) => cat.id)} strategy={verticalListSortingStrategy}>
+            {categories.map((category) =>
+              editingId === category.id ? (
+                <Card key={category.id} className="overflow-hidden mb-3">
+                  <CardContent className="p-0">
+                    <form onSubmit={handleUpdateSubmit} className="p-4 space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <Input
+                            placeholder="عنوان دسته‌بندی"
+                            value={editForm.name}
+                            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Textarea
+                            placeholder="توضیحات (اختیاری)"
+                            value={editForm.description}
+                            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                            className="h-10"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex flex-row-reverse justify-end gap-2">
+                        <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
+                          <Save className="w-4 h-4 mr-2" />
+                          ذخیره
+                        </Button>
+                        <Button type="button" variant="outline" size="sm" onClick={() => setEditingId("")}>
+                          <X className="w-4 h-4 mr-2" />
+                          لغو
+                        </Button>
+                      </div>
+                    </form>
+                  </CardContent>
+                </Card>
               ) : (
-                <div className="p-4 flex flex-row-reverse justify-between items-center">
-                  <div className="flex flex-col w-3/4 gap-2">
-                    <h3 className="font-medium">{category.name}</h3>
-                    {category.description && <p className="text-sm text-slate-500">{category.description}</p>}
-                  </div>
-                  <div className="flex flex-row-reverse gap-2">
-                    <Button variant="outline" size="sm" className="bg-background hover:bg-white" onClick={() => handleEditClick(category)}>
-                      <Edit className="w-4 h-4" />
-                      <span className="sr-only">ویرایش</span>
-                    </Button>
-                    <Button variant="outline" size="sm" className="group bg-background hover:bg-red-500" onClick={() => handleDeleteClick(category.id, category.name)}>
-                      <Trash2 className="w-4 h-4 text-red-500 group-hover:text-red-50" />
-                      <span className="sr-only">حذف</span>
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                <SortableCategoryItem
+                  key={category.id}
+                  category={category}
+                  onEdit={handleEditClick}
+                  onDelete={handleDeleteClick}
+                />
+              ),
+            )}
+          </SortableContext>
+        </DndContext>
+        {isReordering && (
+          <div className="flex justify-center py-2">
+            <p className="text-sm text-amber-600">ذخیره ترتیب جدید...</p>
+          </div>
+        )}
       </div>
     </div>
   )
