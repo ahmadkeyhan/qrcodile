@@ -75,6 +75,28 @@ export async function deleteCategory(id: string) {
   }
 }
 
+export async function reorderCategories(orderedIds: string[]) {
+  try {
+    const response = await fetch("/api/categories/reorder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ orderedIds }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to reorder categories")
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("Error reordering categories:", error)
+    throw error
+  }
+}
+
 // Menu Item CRUD operations
 export async function getMenuItems() {
   try {
