@@ -5,13 +5,17 @@ import { CSS } from "@dnd-kit/utilities"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Edit, Trash2, GripVertical } from "lucide-react"
-import type { ICategory } from "@/models/Category"
 
-type Category = Omit<ICategory, "createdAt" | "updatedAt"> & { id: string }
+interface category {
+    id: string, 
+    name: string, 
+    description: string,
+    order: number
+}
 
 interface SortableCategoryItemProps {
-  category: Category
-  onEdit: (category: Category) => void
+  category: category
+  onEdit: (category: category) => void
   onDelete: (id: string, name: string) => void
 }
 
@@ -29,8 +33,8 @@ export default function SortableCategoryItem({ category, onEdit, onDelete }: Sor
     <div ref={setNodeRef} style={style} className="mb-3">
       <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
         <CardContent className="p-0">
-          <div className="p-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
+          <div className="p-3 flex flex-row-reverse justify-between items-center">
+            <div className="flex flex-row-reverse items-center gap-3">
               <Button
                 variant="ghost"
                 size="sm"
@@ -41,19 +45,19 @@ export default function SortableCategoryItem({ category, onEdit, onDelete }: Sor
                 <GripVertical className="w-5 h-5 text-slate-400" />
                 <span className="sr-only">Drag to reorder</span>
               </Button>
-              <div>
+              <div className="flex flex-col gap-1">
                 <h3 className="font-medium">{category.name}</h3>
                 {category.description && <p className="text-sm text-slate-500">{category.description}</p>}
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={() => onEdit(category)}>
+            <div className="flex flex-row-reverse gap-2">
+              <Button variant="outline" size="sm" onClick={() => onEdit(category)}>
                 <Edit className="w-4 h-4" />
-                <span className="sr-only">Edit</span>
+                <span className="sr-only">ویرایش</span>
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => onDelete(category.id, category.name)}>
-                <Trash2 className="w-4 h-4 text-red-500" />
-                <span className="sr-only">Delete</span>
+              <Button variant="outline" size="sm" className="group hover:bg-red-500" onClick={() => onDelete(category.id, category.name)}>
+                <Trash2 className="w-4 h-4 text-red-500 group-hover:text-red-50" />
+                <span className="sr-only">حذف</span>
               </Button>
             </div>
           </div>
@@ -62,4 +66,3 @@ export default function SortableCategoryItem({ category, onEdit, onDelete }: Sor
     </div>
   )
 }
-
