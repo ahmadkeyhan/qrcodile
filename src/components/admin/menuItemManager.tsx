@@ -1,19 +1,42 @@
 "use client"
 
+import type React from "react"
 import { useState, useEffect, FormEvent } from "react"
-import { Plus, Edit, Trash2, Save, X } from "lucide-react"
-
+import { Plus, Edit, Trash2, Save, X, ChevronDown, ChevronUp } from "lucide-react"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import { 
+  arrayMove, 
+  SortableContext, 
+  sortableKeyboardCoordinates, 
+  verticalListSortingStrategy 
+} from "@dnd-kit/sortable"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textArea"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { getCategories, getMenuItems, createMenuItem, updateMenuItem, deleteMenuItem } from "@/lib/data"
+import { 
+  getCategories, 
+  getMenuItems, 
+  createMenuItem, 
+  updateMenuItem, 
+  deleteMenuItem,
+  reorderMenuItems
+} from "@/lib/data"
 import { formatCurrency } from "@/lib/utils"
 import { toast } from "@/components/ui/useToast"
 
 import ImageUploader from "./imageUploader"
 import Image from "next/image"
+import SortableMenuItem from "./sortableMenuItem"
 import { deleteImage } from "@/lib/imageUtils"
 
 interface item {
@@ -24,16 +47,23 @@ interface item {
     categoryId: string,
     ingredients: string,
     image: string,
+    order: number
 }
 
 interface category {
     id: string, 
     name: string, 
-    description: string
+    description: string,
+    order: number
+}
+
+interface groupedItems {
+  [categoryId: string]: item[]
 }
 
 export default function MenuItemManager() {
   const [items, setItems] = useState<item[]>([])
+  const [groupedItems,setGroupedItems] = useState<groupedItems>({})
   const [categories, setCategories] = useState<category[]>([])
   const [newItem, setNewItem] = useState({
     name: "",
@@ -52,15 +82,66 @@ export default function MenuItemManager() {
     ingredients: "",
     image: "",
   })
+  const [isReordering, setIsReordering] = useState<string | null>(null)
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
+
+  // Set up sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // 8px movement required before drag starts
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  )
 
   useEffect(() => {
     loadData()
   }, [])
 
+  useEffect(() => {
+    // Group items by category
+    const grouped: groupedItems = {}
+
+    items.forEach((item) => {
+      const categoryId = item.categoryId as string
+      if (!grouped[categoryId]) {
+        grouped[categoryId] = []
+      }
+      grouped[categoryId].push(item)
+    })
+
+    // Sort items within each category by order
+    Object.keys(grouped).forEach((categoryId) => {
+      grouped[categoryId].sort((a, b) => (a.order || 0) - (b.order || 0))
+    })
+
+    setGroupedItems(grouped)
+
+    // Expand all categories by default
+    if (categories.length > 0) {
+      const newExpanded = new Set<string>()
+      categories.forEach((category) => newExpanded.add(category.id))
+      setExpandedCategories(newExpanded)
+    }
+  }, [items, categories])
+
   const loadData = async () => {
     const [itemsData, categoriesData] = await Promise.all([getMenuItems(), getCategories()])
     setItems(itemsData)
     setCategories(categoriesData)
+  }
+
+  const toggleCategory = (categoryId: string) => {
+    const newExpanded = new Set(expandedCategories)
+    if (newExpanded.has(categoryId)) {
+      newExpanded.delete(categoryId)
+    } else {
+      newExpanded.add(categoryId)
+    }
+    setExpandedCategories(newExpanded)
   }
 
   const handleCreateSubmit = async (e: FormEvent) => {
@@ -156,6 +237,76 @@ export default function MenuItemManager() {
     }
   }
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id && isReordering) {
+      try {
+        // Find the category items
+        const categoryItems = groupedItems[isReordering] || []
+
+        // Calculate the new order of items
+        const oldIndex = categoryItems.findIndex((item) => item.id === active.id)
+        const newIndex = categoryItems.findIndex((item) => item.id === over.id)
+
+        // Create the new array with the updated order
+        const updatedItems = arrayMove([...categoryItems], oldIndex, newIndex)
+
+        // Update the local state for immediate feedback
+        const newGroupedItems = { ...groupedItems }
+        newGroupedItems[isReordering] = updatedItems
+        setGroupedItems(newGroupedItems)
+
+        // Update the items array to reflect the new order
+        const newItems = [...items]
+        const itemsToUpdate = newItems.filter((item) => item.categoryId === isReordering)
+
+        // Remove the items from this category
+        const otherItems = newItems.filter((item) => item.categoryId !== isReordering)
+
+        // Create a mapping of id to new order
+        const orderMap = new Map()
+        updatedItems.forEach((item, index) => {
+          if (item.id) {
+            orderMap.set(item.id, index)
+          }
+        })
+
+        // Update the order of the items
+        itemsToUpdate.forEach((item) => {
+          if (item.id && orderMap.has(item.id)) {
+            item.order = orderMap.get(item.id)
+          }
+        })
+
+        // Combine the updated items with the other items
+        setItems([...otherItems, ...itemsToUpdate])
+
+        // Get the ordered IDs from the updated array
+        const orderedIds = updatedItems.map((item) => item.id as string)
+
+        // Save the new order to the database directly
+        await reorderMenuItems(isReordering, orderedIds)
+
+        toast({
+          title: "Menu items reordered",
+          description: "The order of menu items has been updated.",
+        })
+      } catch (error: any) {
+        // If there's an error, reload the original order
+        loadData()
+
+        toast({
+          title: "Error reordering menu items",
+          description: error.message || "Failed to update menu item order",
+          variant: "destructive",
+        })
+      } finally {
+        setIsReordering(null)
+      }
+    }
+  }
+
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
@@ -224,10 +375,80 @@ export default function MenuItemManager() {
       </form>
 
       <div className="space-y-4">
-        {items.map((item) => (
-          <Card key={item.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              {editingId === item.id ? (
+        {/* {items.map((item) => ( */}
+        {categories.length === 0 ? (
+          <div className="text-center py-8 text-slate-500">
+            <p>No categories yet. Please create a category first.</p>
+          </div>
+        ) : (
+          categories.map((category) => {
+            const categoryItems = groupedItems[category.id] || []
+            const isExpanded = expandedCategories.has(category.id)
+
+            return (
+              <Card key={category.id} className="overflow-hidden">
+                <CardHeader className="py-3 px-4 cursor-pointer" onClick={() => toggleCategory(category.id)}>
+                  <div className="flex justify-between items-center">
+                    <CardTitle className="text-lg flex items-center">
+                      {category.name}
+                      <span className="ml-2 text-xs text-slate-500">
+                        ({categoryItems.length} {categoryItems.length === 1 ? "item" : "items"})
+                      </span>
+                    </CardTitle>
+                    <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
+                      {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                    </Button>
+                  </div>
+                </CardHeader>
+
+                {isExpanded && (
+                  <CardContent className="pt-0 pb-3">
+                    {categoryItems.length === 0 ? (
+                      <div className="text-center py-4 text-slate-500">
+                        <p>No items in this category yet.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center mb-2">
+                          <p className="text-sm text-slate-500">Drag to reorder items</p>
+                          {isReordering === category.id ? (
+                            <p className="text-sm text-amber-600">Saving order...</p>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setIsReordering(category.id)}
+                              disabled={isReordering !== null}
+                            >
+                              Reorder Items
+                            </Button>
+                          )}
+                        </div>
+
+                        {isReordering === category.id ? (
+                          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                            <SortableContext
+                              items={categoryItems.map((item) => item.id as string)}
+                              strategy={verticalListSortingStrategy}
+                            >
+                              {categoryItems.map((item) => (
+                                <SortableMenuItem
+                                  key={item.id}
+                                  item={item}
+                                  category={category}
+                                  onEdit={handleEditClick}
+                                  onDelete={handleDeleteClick}
+                                />
+                              ))}
+                            </SortableContext>
+                          </DndContext>
+                        ) : (
+                          <div className="space-y-3">
+                            {categoryItems.map((item) =>
+                              editingId === item.id ? (
+                                <Card key={item.id} className="overflow-hidden">
+                                  <CardContent className="p-0">
+              {/* {editingId === item.id ? ( */}
                 <form onSubmit={handleUpdateSubmit} className="p-4 space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
@@ -300,7 +521,11 @@ export default function MenuItemManager() {
                     </Button>
                   </div>
                 </form>
-              ) : (
+              </CardContent>
+            </Card>
+          ) : (
+            <Card key={item.id} className="overflow-hidden">
+              <CardContent className="p-0">
                 <div className="p-4 flex flex-row-reverse gap-4 items-center">
                   {item.image ? (
                     <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
@@ -317,12 +542,9 @@ export default function MenuItemManager() {
                       <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
                     </div>
                     <p className="text-sm text-slate-500 text-right">{item.description}</p>
-                    <div className="flex flex-row-reverse items-center gap-2 mt-1">
-                      <span className="text-xs px-2 py-0.5 bg-slate-100 rounded-full">
-                        {categories.find((c) => c.id === item.categoryId)?.name || "Uncategorized"}
-                      </span>
-                      {item.ingredients && <span className="text-xs text-slate-400">{item.ingredients}</span>}
-                    </div>
+                    {item.ingredients && (
+                      <span className="text-xs text-slate-400">{item.ingredients}</span>
+                    )}
                     <div className="flex flex-row-reverse justify-end gap-2">
                       <Button 
                         variant="outline" 
@@ -342,10 +564,20 @@ export default function MenuItemManager() {
                     </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          ),
+        )}
+      </div>
+    )}
+                </div>
               )}
             </CardContent>
+                )}
           </Card>
-        ))}
+            )
+          })
+        )}
       </div>
     </div>
   )
