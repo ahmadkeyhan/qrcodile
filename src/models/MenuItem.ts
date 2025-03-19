@@ -10,6 +10,7 @@ export interface IMenuItem {
   categoryId: mongoose.Types.ObjectId | string
   ingredients?: string
   image?: string
+  order?: number
   createdAt?: Date
   updatedAt?: Date
 }
@@ -26,6 +27,7 @@ const menuItemSchema = new Schema<IMenuItem>(
     },
     ingredients: { type: String },
     image: { type: String },
+    order: { type: Number, default: 0 },
   },
   {
     timestamps: true,
