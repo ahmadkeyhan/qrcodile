@@ -3,29 +3,32 @@
 import { useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
-
 import { formatCurrency } from "@/lib/utils"
 
-export default function MenuItemCard({ item } : {item:{
-    id: string,
-    name: string,
-    description: string,
-    price: number,
-    categoryId: string,
-    ingredients: string,
-    image: string,
-  }}) {
+interface item {
+  id: string,
+  name: string,
+  description: string,
+  price: number,
+  categoryId: string,
+  ingredients: string,
+  image: string,
+  order: number
+}
+
+export default function MenuItemCard({ item, onClick } : {item:item, onClick: (item:item) => void}) {
   const [isHovered, setIsHovered] = useState(false)
 
   return (
     <motion.div
-      className="flex gap-8 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow"
+      className="flex gap-8 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow cursor-pointer"
       whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
+      onClick={() => onClick(item)}
     >
       <div className="relative h-28 w-28 -m-4 rounded-md rounded-l-none overflow-hidden flex-shrink-0">
         <Image
