@@ -98,7 +98,8 @@ export async function reorderCategories(orderedIds: string[]) {
 export async function getMenuItems() {
   try {
     await connectToDatabase()
-    const menuItems = await MenuItem.find().sort({ name: 1 })
+    // Updated to sort by categoryId first, then order
+    const menuItems = await MenuItem.find().sort({ categoryId: 1, order: 1, name: 1 })
     return JSON.parse(JSON.stringify(menuItems))
   } catch (error) {
     console.error("Error fetching menu items:", error)
@@ -109,7 +110,8 @@ export async function getMenuItems() {
 export async function getCategoryItems(categoryId:IMenuItem["categoryId"]) {
   try {
     await connectToDatabase()
-    const items = await MenuItem.find({ categoryId }).sort({ name: 1 })
+    // Updated to sort by order first, then name
+    const items = await MenuItem.find({ categoryId }).sort({ order: 1, name: 1 })
     return JSON.parse(JSON.stringify(items))
   } catch (error) {
     console.error("Error fetching category items:", error)
@@ -120,6 +122,12 @@ export async function getCategoryItems(categoryId:IMenuItem["categoryId"]) {
 export async function createMenuItem(itemData: IMenuItem) {
   try {
     await connectToDatabase()
+    // If order is not provided, set it to be the last item in the category
+    if (itemData.categoryId && itemData.order === undefined) {
+      const lastItem = await MenuItem.findOne({ categoryId: itemData.categoryId }).sort({ order: -1 }).limit(1)
+
+      itemData.order = lastItem ? (lastItem.order || 0) + 1 : 0
+    }
     const newItem = new MenuItem({...itemData, _id: new mongoose.Types.ObjectId()})
     await newItem.save()
     return JSON.parse(JSON.stringify(newItem))
@@ -158,6 +166,24 @@ export async function deleteMenuItem(id: string) {
   } catch (error) {
     console.error("Error deleting menu item:", error)
     throw new Error("Failed to delete menu item")
+  }
+}
+
+export async function reorderMenuItems(categoryId: string, orderedIds: string[]) {
+  try {
+    await connectToDatabase()
+
+    // Update each menu item with its new order
+    const updatePromises = orderedIds.map((id, index) => {
+      return MenuItem.findByIdAndUpdate(id, { order: index })
+    })
+
+    await Promise.all(updatePromises)
+
+    return { success: true, message: "Menu items reordered successfully" }
+  } catch (error) {
+    console.error("Error reordering menu items:", error)
+    throw new Error("Failed to reorder menu items")
   }
 }
 
