@@ -19,7 +19,7 @@ export default function MenuItemCard({ item } : {item:{
 
   return (
     <motion.div
-      className="flex gap-4 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow"
+      className="flex gap-8 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow"
       whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -27,13 +27,13 @@ export default function MenuItemCard({ item } : {item:{
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
+      <div className="relative h-28 w-28 -m-4 rounded-md rounded-l-none overflow-hidden flex-shrink-0">
         <Image
           src={item.image || "/placeholder.svg?height=80&width=80"}
           alt={item.name}
           fill
           className="object-cover"
-          sizes="80px"
+          sizes="112px"
         />
         <motion.div
           className="absolute inset-0 bg-amber-500 mix-blend-overlay"
