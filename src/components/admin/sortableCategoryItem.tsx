@@ -17,9 +17,10 @@ interface SortableCategoryItemProps {
   category: category
   onEdit: (category: category) => void
   onDelete: (id: string, name: string) => void
+  sortDisabled: boolean
 }
 
-export default function SortableCategoryItem({ category, onEdit, onDelete }: SortableCategoryItemProps) {
+export default function SortableCategoryItem({ category, onEdit, onDelete, sortDisabled }: SortableCategoryItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: category.id })
 
   const style = {
@@ -41,6 +42,7 @@ export default function SortableCategoryItem({ category, onEdit, onDelete }: Sor
                 className="cursor-grab active:cursor-grabbing p-1 h-auto"
                 {...attributes}
                 {...listeners}
+                disabled={sortDisabled}
               >
                 <GripVertical className="w-5 h-5 text-slate-400" />
                 <span className="sr-only">Drag to reorder</span>

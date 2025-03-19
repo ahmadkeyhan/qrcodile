@@ -245,6 +245,7 @@ export default function CategoryManager() {
                   category={category}
                   onEdit={handleEditClick}
                   onDelete={handleDeleteClick}
+                  sortDisabled={editingId !== ""}
                 />
               ),
             )}
