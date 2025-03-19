@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, FormEvent } from "react"
-import { Plus, Edit, Trash2, Save, X, ChevronDown, ChevronUp } from "lucide-react"
+import { Plus, Edit, Trash2, Save, X, ChevronDown, ChevronUp, LucideListStart } from "lucide-react"
 import {
   DndContext,
   closestCenter,
@@ -388,12 +388,9 @@ export default function MenuItemManager() {
             return (
               <Card key={category.id} className="overflow-hidden">
                 <CardHeader className="py-3 px-4 cursor-pointer" onClick={() => toggleCategory(category.id)}>
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-row-reverse justify-between items-center">
                     <CardTitle className="text-lg flex items-center">
                       {category.name}
-                      <span className="ml-2 text-xs text-slate-500">
-                        ({categoryItems.length} {categoryItems.length === 1 ? "item" : "items"})
-                      </span>
                     </CardTitle>
                     <Button variant="ghost" size="sm" className="p-0 h-8 w-8">
                       {isExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
@@ -409,20 +406,27 @@ export default function MenuItemManager() {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        <div className="flex justify-between items-center mb-2">
-                          <p className="text-sm text-slate-500">Drag to reorder items</p>
+                        <div className="flex flex-row-reverse justify-between items-center mb-2">
                           {isReordering === category.id ? (
-                            <p className="text-sm text-amber-600">Saving order...</p>
-                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setIsReordering(null)}
+                            >
+                              <X className="w-4 h-4" />
+                              انصراف
+                            </Button>
+                          ) : categoryItems.length > 1 ? (
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => setIsReordering(category.id)}
                               disabled={isReordering !== null}
                             >
-                              Reorder Items
+                              <LucideListStart className="h-5 w-5" />
+                              <p>تغییر ترتیب لیست</p>
                             </Button>
-                          )}
+                          ) : null}
                         </div>
 
                         {isReordering === category.id ? (

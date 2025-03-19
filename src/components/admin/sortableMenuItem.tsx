@@ -47,7 +47,7 @@ export default function SortableMenuItem({ item, category, onEdit, onDelete }: S
     <div ref={setNodeRef} style={style} className="mb-3">
       <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
         <CardContent className="p-0">
-          <div className="p-4 flex gap-4">
+          <div className="p-3 flex flex-row-reverse gap-3">
             <Button
               variant="ghost"
               size="sm"
@@ -60,40 +60,22 @@ export default function SortableMenuItem({ item, category, onEdit, onDelete }: S
             </Button>
 
             {item.image ? (
-              <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
+              <div className="relative h-20 w-20 hidden sm:flex rounded-md overflow-hidden flex-shrink-0">
                 <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
               </div>
             ) : (
-              <div className="h-20 w-20 rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0">
+              <div className="h-20 w-20 hidden sm:flex rounded-md bg-slate-100 items-center justify-center flex-shrink-0">
                 <span className="text-slate-400 text-xs">No image</span>
               </div>
             )}
 
+
             <div className="flex-1">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-row-reverse justify-between items-start">
                 <h3 className="font-medium">{item.name}</h3>
                 <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
               </div>
               <p className="text-sm text-slate-500 line-clamp-1">{item.description}</p>
-              <div className="flex items-center gap-2 mt-1">
-                {category && <span className="text-xs px-2 py-0.5 bg-slate-100 rounded-full">{category.name}</span>}
-                {item.ingredients && <span className="text-xs text-slate-400 truncate">{item.ingredients}</span>}
-              </div>
-              <div className="flex gap-2 mt-2">
-                <Button variant="ghost" size="sm" onClick={() => onEdit(item)}>
-                  <Edit className="w-4 h-4 mr-1" />
-                  Edit
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => item.id && onDelete(item.id, item.name)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="w-4 h-4 mr-1" />
-                  Delete
-                </Button>
-              </div>
             </div>
           </div>
         </CardContent>
