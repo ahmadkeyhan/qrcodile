@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import CategoryManager from "@/components/admin/categoryManager"
 import MenuItemManager from "@/components/admin/menuItemManager"
 import PasswordManager from "@/components/admin/passwordManager"
+import UserManager from "@/components/admin/userManager"
 
 export default function AdminPage() {
   const { data: session, status } = useSession()
@@ -30,6 +31,8 @@ export default function AdminPage() {
   if (!isClient || status === "loading") {
     return <AdminSkeleton />
   }
+
+  const isAdmin = session?.user?.role === "admin"
 
   const handleLogout = async () => {
     await signOut({ redirect: false })
@@ -65,30 +68,42 @@ export default function AdminPage() {
         <Tabs defaultValue="items" className="space-y-6">
           <TabsList className="inline-flex w-ful max-w-md mx-auto">
             <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
-            <TabsTrigger value="categories">دسته‌بندی‌ها</TabsTrigger>
+            {isAdmin && <TabsTrigger value="categories">دسته‌بندی‌ها</TabsTrigger>}
             <TabsTrigger value="preferences">تنظیمات</TabsTrigger>
+            {isAdmin && <TabsTrigger value="users">کارکنان</TabsTrigger>}
           </TabsList>
 
           <TabsContent value="items" className="space-y-6">
             <h1 className="text-xl font-semibold text-slate-900">مدیریت آیتم‌ها</h1>
             <Suspense fallback={<ItemsSkeleton />}>
-              <MenuItemManager />
+              <MenuItemManager isAdmin={isAdmin} />
             </Suspense>
           </TabsContent>
 
-          <TabsContent value="categories" className="space-y-6">
-            <h1 className="text-xl font-semibold text-slate-900">مدیریت دسته‌بندی‌ها</h1>
-            <Suspense fallback={<CategoriesSkeleton />}>
-              <CategoryManager />
-            </Suspense>
-          </TabsContent>
+          {isAdmin && (
+            <TabsContent value="categories" className="space-y-6">
+              <h1 className="text-xl font-semibold text-slate-900">مدیریت دسته‌بندی‌ها</h1>
+              <Suspense fallback={<CategoriesSkeleton />}>
+                <CategoryManager />
+              </Suspense>
+            </TabsContent>
+          )}
 
           <TabsContent value="preferences" className="space-y-6">
-            <h2 className="text-xl font-semibold text-slate-900">Account Preferences</h2>
+            <h2 className="text-xl font-semibold text-slate-900">تنظیمات اکانت</h2>
             <Suspense fallback={<PreferencesSkeleton />}>
               <PasswordManager />
             </Suspense>
           </TabsContent>
+
+          {isAdmin && (
+            <TabsContent value="users" className="space-y-6">
+              <h2 className="text-xl font-semibold text-slate-900">مدیریت کارکنان</h2>
+              <Suspense fallback={<UsersSkeleton />}>
+                <UserManager />
+              </Suspense>
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </main>
@@ -145,6 +160,21 @@ function PreferencesSkeleton() {
     <div className="space-y-4">
       <Skeleton className="h-10 w-full max-w-md" />
       <Skeleton className="h-64 w-full rounded-lg" />
+    </div>
+  )
+}
+
+function UsersSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full max-w-md" />
+      <div className="grid gap-4">
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-lg" />
+          ))}
+      </div>
     </div>
   )
 }
