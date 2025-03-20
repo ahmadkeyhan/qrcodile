@@ -7,7 +7,7 @@ import Image from "next/image"
 import { Upload, X, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { uploadImage, deleteImage } from "@/lib/imageUtils"
-import { useToast } from "@/components/ui/useToast"
+import { useToast } from "@/components/ui/toastContext"
 
 interface ImageUploaderProps {
   value: string

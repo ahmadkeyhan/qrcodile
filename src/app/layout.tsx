@@ -2,7 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Vazirmatn, Changa } from "next/font/google"
 import "./globals.css"
-import { Toaster } from "@/components/ui/toaster"
+import { ToastProvider } from "@/components/ui/toastContext"
 import { Providers } from "./providers"
 
 const vazir = Vazirmatn({
@@ -31,8 +31,9 @@ export default function RootLayout({
     <html lang="fa" dir="rtl" className={`${vazir.variable} ${changa.variable}`}>
       <body>
         <Providers>
-          {children}
-          <Toaster />
+          <ToastProvider>
+            {children}
+          </ToastProvider>
         </Providers>
       </body>
     </html>

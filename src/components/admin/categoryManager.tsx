@@ -29,7 +29,7 @@ import {
   deleteCategory, 
   reorderCategories 
 } from "@/lib/data"
-import { toast } from "@/components/ui/useToast"
+import { useToast } from "@/components/ui/toastContext"
 import SortableCategoryItem from "./sortableCategoryItem"
 
 interface category {
@@ -67,6 +67,8 @@ export default function CategoryManager() {
     data.sort((a: category, b: category) => (a.order || 0) - (b.order || 0))
     setCategories(data)
   }
+
+  const { toast } = useToast()
 
   const handleCreateSubmit = async (e: FormEvent) => {
     e.preventDefault()

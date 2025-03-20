@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { useToast } from "@/components/ui/useToast"
+import { useToast } from "@/components/ui/toastContext"
 
 export default function LoginPage() {
   const [name, setName] = useState("")

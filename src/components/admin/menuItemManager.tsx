@@ -32,7 +32,7 @@ import {
   reorderMenuItems
 } from "@/lib/data"
 import { formatCurrency } from "@/lib/utils"
-import { toast } from "@/components/ui/useToast"
+import { useToast } from "@/components/ui/toastContext"
 
 import ImageUploader from "./imageUploader"
 import Image from "next/image"
@@ -84,6 +84,9 @@ export default function MenuItemManager() {
   })
   const [isReordering, setIsReordering] = useState<string | null>(null)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
+
+  // Make sure we're destructuring the toast function from useToast
+  const { toast } = useToast()
 
   // Set up sensors for drag and drop
   const sensors = useSensors(
