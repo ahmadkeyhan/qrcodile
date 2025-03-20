@@ -21,7 +21,7 @@ export default function MenuItemCard({ item, onClick } : {item:item, onClick: (i
 
   return (
     <motion.div
-      className="flex gap-4 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow cursor-pointer"
+      className="flex items-center gap-4 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow cursor-pointer"
       whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
