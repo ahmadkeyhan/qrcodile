@@ -21,7 +21,7 @@ export default function MenuItemCard({ item, onClick } : {item:item, onClick: (i
 
   return (
     <motion.div
-      className="flex gap-8 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow cursor-pointer"
+      className="flex gap-4 p-4 rounded-lg border border-amber-100 bg-white hover:shadow-md transition-shadow cursor-pointer"
       whileHover={{ y: -5 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -30,7 +30,7 @@ export default function MenuItemCard({ item, onClick } : {item:item, onClick: (i
       transition={{ duration: 0.3 }}
       onClick={() => onClick(item)}
     >
-      <div className="relative h-28 w-28 -m-4 rounded-md rounded-l-none overflow-hidden flex-shrink-0">
+      <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
         <Image
           src={item.image || "/placeholder.svg?height=80&width=80"}
           alt={item.name}
