@@ -38,6 +38,9 @@ import ImageUploader from "./imageUploader"
 import Image from "next/image"
 import SortableMenuItem from "./sortableMenuItem"
 import { deleteImage } from "@/lib/imageUtils"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import AvailabilityToggle from "./availabilityToggle"
 
 interface item {
     id: string,
@@ -47,7 +50,8 @@ interface item {
     categoryId: string,
     ingredients: string,
     image: string,
-    order: number
+    order: number,
+    available: boolean
 }
 
 interface category {
@@ -61,7 +65,7 @@ interface groupedItems {
   [categoryId: string]: item[]
 }
 
-export default function MenuItemManager() {
+export default function MenuItemManager({isAdmin = true}) {
   const [items, setItems] = useState<item[]>([])
   const [groupedItems,setGroupedItems] = useState<groupedItems>({})
   const [categories, setCategories] = useState<category[]>([])
@@ -72,6 +76,7 @@ export default function MenuItemManager() {
     categoryId: "",
     ingredients: "",
     image: "",
+    available: true
   })
   const [editingId, setEditingId] = useState<string>("")
   const [editForm, setEditForm] = useState({
@@ -81,6 +86,7 @@ export default function MenuItemManager() {
     categoryId: "",
     ingredients: "",
     image: "",
+    available: true
   })
   const [isReordering, setIsReordering] = useState<string | null>(null)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set())
@@ -162,6 +168,7 @@ export default function MenuItemManager() {
         categoryId: "",
         ingredients: "",
         image: "",
+        available: true
       })
       await loadData()
       toast({
@@ -186,6 +193,7 @@ export default function MenuItemManager() {
       categoryId: item.categoryId,
       ingredients: item.ingredients || "",
       image: item.image || "",
+      available: true
     })
   }
 
@@ -312,70 +320,72 @@ export default function MenuItemManager() {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
-        <h3 className="font-medium">افزودن آیتم‌ جدید</h3>
-        <div className="flex flex-col w-full flex-grow gap-4 sm:flex-row-reverse sm:flex-wrap">
-          <div className="sm:w-[calc(50%-0.5rem)]">
-            <Input
-              placeholder="عنوان آیتم"
-              value={newItem.name}
-              onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-              required
-            />
+      {isAdmin && (
+        <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
+          <h3 className="font-medium">افزودن آیتم‌ جدید</h3>
+          <div className="flex flex-col w-full flex-grow gap-4 sm:flex-row-reverse sm:flex-wrap">
+            <div className="sm:w-[calc(50%-0.5rem)]">
+              <Input
+                placeholder="عنوان آیتم"
+                value={newItem.name}
+                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                required
+              />
+            </div>
+            <div className="sm:w-[calc(50%-0.5rem)]">
+              <Input
+                placeholder="قیمت"
+                type="number"
+                step="0.01"
+                min="0"
+                value={newItem.price}
+                onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                required
+              />
+            </div>
+            <div className="sm:w-[calc(50%-0.5rem)]">
+              <Textarea
+                placeholder="توضیحات"
+                value={newItem.description}
+                onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                required
+              />
+            </div>
+            <div className="sm:w-[calc(50%-0.5rem)]">
+              <Input
+                placeholder="مواد تشکیل دهنده (اختیاری)"
+                value={newItem.ingredients}
+                onChange={(e) => setNewItem({ ...newItem, ingredients: e.target.value })}
+              />
+            </div>
+            <div className="sm:w-[calc(50%-0.5rem)]">
+              <Select
+                value={newItem.categoryId}
+                onValueChange={(value) => setNewItem({ ...newItem, categoryId: value })}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="انتخاب دسته‌بندی" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="sm:col-span-2">
+              <ImageUploader key={`new-item-uploader-${newItem.image}`} value={newItem.image} onChange={(url) => setNewItem({ ...newItem, image: url })} />
+            </div>
           </div>
-          <div className="sm:w-[calc(50%-0.5rem)]">
-            <Input
-              placeholder="قیمت"
-              type="number"
-              step="0.01"
-              min="0"
-              value={newItem.price}
-              onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
-              required
-            />
-          </div>
-          <div className="sm:w-[calc(50%-0.5rem)]">
-            <Textarea
-              placeholder="توضیحات"
-              value={newItem.description}
-              onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-              required
-            />
-          </div>
-          <div className="sm:w-[calc(50%-0.5rem)]">
-            <Input
-              placeholder="مواد تشکیل دهنده (اختیاری)"
-              value={newItem.ingredients}
-              onChange={(e) => setNewItem({ ...newItem, ingredients: e.target.value })}
-            />
-          </div>
-          <div className="sm:w-[calc(50%-0.5rem)]">
-            <Select
-              value={newItem.categoryId}
-              onValueChange={(value) => setNewItem({ ...newItem, categoryId: value })}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="انتخاب دسته‌بندی" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="sm:col-span-2">
-            <ImageUploader key={`new-item-uploader-${newItem.image}`} value={newItem.image} onChange={(url) => setNewItem({ ...newItem, image: url })} />
-          </div>
-        </div>
-        <Button type="submit" className="bg-amber-500 hover:bg-amber-600 ">
-          <Plus className="w-4 h-4" />
-          افزودن آیتم به منو
-        </Button>
-      </form>
+          <Button type="submit" className="bg-amber-500 hover:bg-amber-600 ">
+            <Plus className="w-4 h-4" />
+            افزودن آیتم به منو
+          </Button>
+        </form>
+      )}
 
       <div className="space-y-4">
         {/* {items.map((item) => ( */}
@@ -409,30 +419,32 @@ export default function MenuItemManager() {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        <div className="flex flex-row-reverse justify-between items-center mb-2">
-                          {isReordering === category.id ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setIsReordering(null)}
-                            >
-                              <X className="w-4 h-4" />
-                              انصراف
-                            </Button>
-                          ) : categoryItems.length > 1 ? (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setIsReordering(category.id)}
-                              disabled={isReordering !== null}
-                            >
-                              <LucideListStart className="h-5 w-5" />
-                              <p>تغییر ترتیب لیست</p>
-                            </Button>
-                          ) : null}
-                        </div>
+                        {isAdmin && (
+                          <div className="flex flex-row-reverse justify-between items-center mb-2">
+                            {isReordering === category.id ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setIsReordering(null)}
+                              >
+                                <X className="w-4 h-4" />
+                                انصراف
+                              </Button>
+                            ) : categoryItems.length > 1 ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setIsReordering(category.id)}
+                                disabled={isReordering !== null}
+                              >
+                                <LucideListStart className="h-5 w-5" />
+                                <p>تغییر ترتیب لیست</p>
+                              </Button>
+                            ) : null}
+                          </div>
+                        )}
 
-                        {isReordering === category.id ? (
+                        {isReordering === category.id && isAdmin ? (
                           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                             <SortableContext
                               items={categoryItems.map((item) => item.id as string)}
@@ -452,136 +464,161 @@ export default function MenuItemManager() {
                         ) : (
                           <div className="space-y-3">
                             {categoryItems.map((item) =>
-                              editingId === item.id ? (
+                              editingId === item.id && isAdmin ? (
                                 <Card key={item.id} className="overflow-hidden">
                                   <CardContent className="p-0">
-              {/* {editingId === item.id ? ( */}
-                <form onSubmit={handleUpdateSubmit} className="p-4 space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <Input
-                        placeholder="عنوان آیتم"
-                        value={editForm.name}
-                        onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        placeholder="قیمت"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={editForm.price}
-                        onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Textarea
-                        placeholder="توضیحات"
-                        value={editForm.description}
-                        onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        placeholder="مواد تشکیل دهنده (اختیاری)"
-                        value={editForm.ingredients}
-                        onChange={(e) => setEditForm({ ...editForm, ingredients: e.target.value })}
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <Select
-                        value={editForm.categoryId}
-                        onValueChange={(value) => setEditForm({ ...editForm, categoryId: value })}
-                        required
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="انتخاب دسته‌بندی" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="sm:col-span-2">
-                      <ImageUploader
-                        value={editForm.image}
-                        onChange={(url) => setEditForm({ ...editForm, image: url })}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-row-reverse justify-end gap-2">
-                    <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
-                      <Save className="w-4 h-4" />
-                      ذخیره
-                    </Button>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setEditingId("")}>
-                      <X className="w-4 h-4" />
-                      لغو
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          ) : (
-            <Card key={item.id} className="overflow-hidden">
-              <CardContent className="p-0">
-                <div className="p-4 flex flex-row-reverse gap-4 items-center">
-                  {item.image ? (
-                    <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
-                      <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" sizes="80" />
-                    </div>
-                  ) : (
-                    <div className="h-20 w-20 rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-slate-400 text-xs">No image</span>
-                    </div>
-                  )}
-                  <div className="flex flex-col w-full gap-2">
-                    <div className="flex flex-row-reverse justify-between items-start">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
-                    </div>
-                    <p className="text-sm text-slate-500 text-right">{item.description}</p>
-                    {item.ingredients && (
-                      <span className="text-xs text-slate-400">{item.ingredients}</span>
+                                    <form onSubmit={handleUpdateSubmit} className="p-4 space-y-4">
+                                      <div className="grid gap-4 sm:grid-cols-2">
+                                        <div>
+                                          <Input
+                                            placeholder="عنوان آیتم"
+                                            value={editForm.name}
+                                            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <Input
+                                            placeholder="قیمت"
+                                            type="number"
+                                            step="0.01"
+                                            min="0"
+                                            value={editForm.price}
+                                            onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
+                                            required
+                                          />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                          <Textarea
+                                            placeholder="توضیحات"
+                                            value={editForm.description}
+                                            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                                            required
+                                          />
+                                        </div>
+                                        <div>
+                                          <Input
+                                            placeholder="مواد تشکیل دهنده (اختیاری)"
+                                            value={editForm.ingredients}
+                                            onChange={(e) => setEditForm({ ...editForm, ingredients: e.target.value })}
+                                          />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                          <Select
+                                            value={editForm.categoryId}
+                                            onValueChange={(value) => setEditForm({ ...editForm, categoryId: value })}
+                                            required
+                                          >
+                                            <SelectTrigger>
+                                              <SelectValue placeholder="انتخاب دسته‌بندی" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              {categories.map((category) => (
+                                                <SelectItem key={category.id} value={category.id}>
+                                                  {category.name}
+                                                </SelectItem>
+                                              ))}
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                          <ImageUploader
+                                            value={editForm.image}
+                                            onChange={(url) => setEditForm({ ...editForm, image: url })}
+                                          />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                          <div className="flex items-center space-x-2">
+                                            <Switch
+                                              id="available-edit"
+                                              checked={editForm.available}
+                                              onCheckedChange={(checked) =>
+                                                setEditForm({ ...editForm, available: checked })
+                                              }
+                                            />
+                                            <Label htmlFor="available-edit">
+                                              {editForm.available ? "Available" : "Unavailable"}
+                                            </Label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div className="flex flex-row-reverse justify-end gap-2">
+                                        <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
+                                          <Save className="w-4 h-4" />
+                                          ذخیره
+                                        </Button>
+                                        <Button type="button" variant="outline" size="sm" onClick={() => setEditingId("")}>
+                                          <X className="w-4 h-4" />
+                                          لغو
+                                        </Button>
+                                      </div>
+                                    </form>
+                                  </CardContent>
+                                </Card>
+                              ) : (
+                                <Card key={item.id} className="overflow-hidden">
+                                  <CardContent className="p-0">
+                                    <div className="p-4 flex flex-row-reverse gap-4 items-center">
+                                      {item.image ? (
+                                        <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
+                                          <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" sizes="80" />
+                                        </div>
+                                      ) : (
+                                        <div className="h-20 w-20 rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                          <span className="text-slate-400 text-xs">No image</span>
+                                        </div>
+                                      )}
+                                      <div className="flex flex-col w-full gap-2">
+                                        <div className="flex flex-row-reverse justify-between items-start">
+                                          <h3 className="font-medium">{item.name}</h3>
+                                          <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
+                                        </div>
+                                        <p className="text-sm text-slate-500 text-right">{item.description}</p>
+                                        {item.ingredients && (
+                                          <span className="text-xs text-slate-400">{item.ingredients}</span>
+                                        )}
+                                        <div>
+                                          <div className="flex flex-row-reverse justify-end gap-2">
+                                            {isAdmin && (
+                                              <>
+                                                <Button 
+                                                  variant="outline" 
+                                                  size="sm" 
+                                                  className="bg-background hover:bg-white"
+                                                  onClick={() => handleEditClick(item)}>
+                                                  <Edit className="w-4 h-4" />
+                                                  <span className="sr-only">ویرایش</span>
+                                                </Button>
+                                                <Button 
+                                                  variant="outline" 
+                                                  size="sm" 
+                                                  className="group bg-background hover:bg-red-500" onClick={() => handleDeleteClick(item.id, item.name)}>
+                                                  <Trash2 className="w-4 h-4 text-red-500 group-hover:text-red-50" />
+                                                  <span className="sr-only">حذف</span>
+                                                </Button>
+                                              </>
+                                            )}
+                                          </div>
+                                          <AvailabilityToggle 
+                                            itemId={item.id || ""}
+                                            itemName={item.name}
+                                            item={item}
+                                            initialAvailable={item.available}
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ),
+                            )}
+                          </div>
+                        )}
+                      </div>
                     )}
-                    <div className="flex flex-row-reverse justify-end gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="bg-background hover:bg-white"
-                        onClick={() => handleEditClick(item)}>
-                        <Edit className="w-4 h-4" />
-                        <span className="sr-only">ویرایش</span>
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="group bg-background hover:bg-red-500" onClick={() => handleDeleteClick(item.id, item.name)}>
-                        <Trash2 className="w-4 h-4 text-red-500 group-hover:text-red-50" />
-                        <span className="sr-only">حذف</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ),
-        )}
-      </div>
-    )}
-                </div>
-              )}
-            </CardContent>
+                  </CardContent>
                 )}
-          </Card>
+              </Card>
             )
           })
         )}
