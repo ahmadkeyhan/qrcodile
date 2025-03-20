@@ -3,6 +3,7 @@
 import connectToDatabase from "./mongodb"
 import { Category, ICategory } from "../models/Category"
 import { MenuItem, IMenuItem } from "../models/MenuItem"
+import { User, IUser } from "../models/User"
 import mongoose from "mongoose"
 
 // Category CRUD operations
@@ -107,15 +108,29 @@ export async function getMenuItems() {
   }
 }
 
+// Update the getCategoryItems function to filter by available
 export async function getCategoryItems(categoryId:IMenuItem["categoryId"]) {
   try {
     await connectToDatabase()
-    // Updated to sort by order first, then name
-    const items = await MenuItem.find({ categoryId }).sort({ order: 1, name: 1 })
+    // Updated to sort by order first, then name, and only return available items for the main page
+    const items = await MenuItem.find({ categoryId, available: true }).sort({ order: 1, name: 1 })
     return JSON.parse(JSON.stringify(items))
   } catch (error) {
     console.error("Error fetching category items:", error)
     throw new Error("Failed to fetch category items")
+  }
+}
+
+// Add a new function to get all items for a category (for admin)
+export async function getAllCategoryItems(categoryId: string) {
+  try {
+    await connectToDatabase()
+    // Return all items regardless of availability status
+    const items = await MenuItem.find({ categoryId }).sort({ order: 1, name: 1 })
+    return JSON.parse(JSON.stringify(items))
+  } catch (error) {
+    console.error("Error fetching all category items:", error)
+    throw new Error("Failed to fetch all category items")
   }
 }
 
@@ -184,6 +199,72 @@ export async function reorderMenuItems(categoryId: string, orderedIds: string[])
   } catch (error) {
     console.error("Error reordering menu items:", error)
     throw new Error("Failed to reorder menu items")
+  }
+}
+
+//User CRUD operations
+// Get all users
+export async function getUsers() {
+  try {
+    await connectToDatabase()
+    const users = await User.find().sort({ name: 1 })
+    return JSON.parse(JSON.stringify(users))
+  } catch (error) {
+    console.error("Error fetching users:", error)
+    throw new Error("Failed to fetch users")
+  }
+}
+
+// Create a new user
+export async function createUser(userData: IUser) {
+  try {
+    await connectToDatabase()
+    const newUser = new User({...userData, _id: new mongoose.Types.ObjectId()})
+    await newUser.save()
+    return JSON.parse(JSON.stringify(newUser))
+  } catch (error: any) {
+    console.error("Error creating user:", error)
+    if (error.code === 11000) {
+      throw new Error("Username already exists")
+    }
+    throw new Error("Failed to create user")
+  }
+}
+
+// Update a user
+export async function updateUser(id: string, userData: IUser) {
+  try {
+    await connectToDatabase()
+    const user = await User.findByIdAndUpdate(id, { $set: userData }, { new: true, runValidators: true })
+
+    if (!user) {
+      throw new Error("User not found")
+    }
+
+    return JSON.parse(JSON.stringify(user))
+  } catch (error: any) {
+    console.error("Error updating user:", error)
+    if (error.code === 11000) {
+      throw new Error("Username already exists")
+    }
+    throw new Error(error.message || "Failed to update user")
+  }
+}
+
+// Delete a user
+export async function deleteUser(id: string) {
+  try {
+    await connectToDatabase()
+    const deletedUser = await User.findByIdAndDelete(id)
+
+    if (!deletedUser) {
+      throw new Error("User not found")
+    }
+
+    return { success: true }
+  } catch (error) {
+    console.error("Error deleting user:", error)
+    throw new Error("Failed to delete user")
   }
 }
 
