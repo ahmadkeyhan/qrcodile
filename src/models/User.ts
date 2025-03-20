@@ -6,7 +6,7 @@ export interface IUser {
   name: string
 //   email: string
   password: string
-  role: "admin" | "user"
+  role: "admin" | "employee"
   createdAt?: Date
   updatedAt?: Date
 }
@@ -31,8 +31,8 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["admin", "user"],
-      default: "user",
+      enum: ["admin", "employee"],
+      default: "employee",
     },
   },
   {
