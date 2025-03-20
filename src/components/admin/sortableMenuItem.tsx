@@ -16,7 +16,8 @@ interface item {
     categoryId: string,
     ingredients: string,
     image: string,
-    order: number
+    order: number,
+    available: boolean
 }
 
 interface category {

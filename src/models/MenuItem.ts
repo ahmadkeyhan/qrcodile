@@ -11,6 +11,7 @@ export interface IMenuItem {
   ingredients?: string
   image?: string
   order?: number
+  available: boolean
   createdAt?: Date
   updatedAt?: Date
 }
@@ -28,6 +29,7 @@ const menuItemSchema = new Schema<IMenuItem>(
     ingredients: { type: String },
     image: { type: String },
     order: { type: Number, default: 0 },
+    available: { type: Boolean, default: true },
   },
   {
     timestamps: true,
