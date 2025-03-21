@@ -232,16 +232,44 @@ export async function createUser(userData: IUser) {
 }
 
 // Update a user
-export async function updateUser(id: string, userData: IUser) {
+export async function updateUser(id: string, userData: Partial<{
+  name: string
+  email: string
+  password: string
+  role: "admin" | "employee"
+}>) {
   try {
     await connectToDatabase()
-    const user = await User.findByIdAndUpdate(id, { $set: userData }, { new: true, runValidators: true })
 
-    if (!user) {
-      throw new Error("User not found")
+    // If password is being updated, we need to handle it specially
+    if (userData.password) {
+      // Find the user first
+      const user = await User.findById(id)
+      if (!user) {
+        throw new Error("User not found")
+      }
+
+      // Update user fields
+      if (userData.name) user.name = userData.name
+      if (userData.email) user.email = userData.email
+      if (userData.role) user.role = userData.role
+
+      // Set the password - it will be hashed by the pre-save hook
+      user.password = userData.password
+
+      // Save the user to trigger the pre-save hook
+      await user.save()
+      return JSON.parse(JSON.stringify(user))
+    } else {
+      // For non-password updates, we can use findByIdAndUpdate
+      const user = await User.findByIdAndUpdate(id, { $set: userData }, { new: true, runValidators: true })
+
+      if (!user) {
+        throw new Error("User not found")
+      }
+
+      return JSON.parse(JSON.stringify(user))
     }
-
-    return JSON.parse(JSON.stringify(user))
   } catch (error: any) {
     console.error("Error updating user:", error)
     if (error.code === 11000) {

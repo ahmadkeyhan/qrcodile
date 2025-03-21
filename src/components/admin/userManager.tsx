@@ -89,7 +89,7 @@ export default function UserManager() {
     setEditForm({
       name: user.name,
       // email: user.email,
-      password: user.password, // Don't show password
+      password: "", // Don't show password
       role: user.role,
     })
   }
@@ -102,12 +102,12 @@ export default function UserManager() {
           name: editForm.name,
           // email: editForm.email,
           role: editForm.role,
-          password: editForm.password
+          // password: editForm.password
         }
         // Only include password if it was changed
-        // if (editForm.password) {
-        //   Object.assign(updateData, { password: editForm.password })
-        // }
+        if (editForm.password) {
+          Object.assign(updateData, { password: editForm.password })
+        }
         await updateUser(editingId, updateData)
         setEditingId(null)
         loadUsers()
