@@ -527,7 +527,7 @@ export default function MenuItemManager({isAdmin = true}) {
                                             onChange={(url) => setEditForm({ ...editForm, image: url })}
                                           />
                                         </div>
-                                        <div className="sm:col-span-2">
+                                        {/* <div className="sm:col-span-2">
                                           <div className="flex items-center space-x-2">
                                             <Switch
                                               id="available-edit"
@@ -537,10 +537,10 @@ export default function MenuItemManager({isAdmin = true}) {
                                               }
                                             />
                                             <Label htmlFor="available-edit">
-                                              {editForm.available ? "Available" : "Unavailable"}
+                                              {editForm.available ? "موجود" : "ناموجود"}
                                             </Label>
                                           </div>
-                                        </div>
+                                        </div> */}
                                       </div>
                                       <div className="flex flex-row-reverse justify-end gap-2">
                                         <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
@@ -559,15 +559,23 @@ export default function MenuItemManager({isAdmin = true}) {
                                 <Card key={item.id} className="overflow-hidden">
                                   <CardContent className="p-0">
                                     <div className="p-4 flex flex-row-reverse gap-4 items-center">
-                                      {item.image ? (
-                                        <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
-                                          <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" sizes="80" />
-                                        </div>
-                                      ) : (
-                                        <div className="h-20 w-20 rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0">
-                                          <span className="text-slate-400 text-xs">No image</span>
-                                        </div>
-                                      )}
+                                      <div className="flex flex-col justify-between items-center gap-2">
+                                        {item.image ? (
+                                          <div className="relative h-20 w-20 rounded-md overflow-hidden flex-shrink-0">
+                                            <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" sizes="80" />
+                                          </div>
+                                        ) : (
+                                          <div className="h-20 w-20 rounded-md bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                            <span className="text-slate-400 text-xs">No image</span>
+                                          </div>
+                                        )}
+                                        <AvailabilityToggle 
+                                              itemId={item.id || ""}
+                                              itemName={item.name}
+                                              item={item}
+                                              initialAvailable={item.available}
+                                            />
+                                      </div>
                                       <div className="flex flex-col w-full gap-2">
                                         <div className="flex flex-row-reverse justify-between items-start">
                                           <h3 className="font-medium">{item.name}</h3>
@@ -577,7 +585,6 @@ export default function MenuItemManager({isAdmin = true}) {
                                         {item.ingredients && (
                                           <span className="text-xs text-slate-400">{item.ingredients}</span>
                                         )}
-                                        <div>
                                           <div className="flex flex-row-reverse justify-end gap-2">
                                             {isAdmin && (
                                               <>
@@ -599,13 +606,6 @@ export default function MenuItemManager({isAdmin = true}) {
                                               </>
                                             )}
                                           </div>
-                                          <AvailabilityToggle 
-                                            itemId={item.id || ""}
-                                            itemName={item.name}
-                                            item={item}
-                                            initialAvailable={item.available}
-                                          />
-                                        </div>
                                       </div>
                                     </div>
                                   </CardContent>
