@@ -14,6 +14,7 @@ import MenuItemManager from "@/components/admin/menuItemManager";
 import PasswordManager from "@/components/admin/passwordManager";
 import UserManager from "@/components/admin/userManager";
 import MenuSettingsManager from "@/components/admin/menuSettingsManager";
+import QRCodeGenerator from "@/components/admin/qrCodeGenerator";
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -48,6 +49,7 @@ export default function AdminPage() {
             <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             {isAdmin && <TabsTrigger value="menu">منو</TabsTrigger>}
             <TabsTrigger value="users">اکانت‌ها</TabsTrigger>
+            {isAdmin && <TabsTrigger value="qr">کیوآر</TabsTrigger>}
           </TabsList>
 
           {isAdmin && (
@@ -90,6 +92,15 @@ export default function AdminPage() {
                 {isAdmin && <UserManager />}
               </Suspense>
             </TabsContent>
+
+            {isAdmin && (
+              <TabsContent value="qr" className="space-y-6">
+                <h1 className="text-xl font-semibold text-amber-900">ایجاد کد کیوآر</h1>
+                <Suspense fallback={<QRCodeSkeleton />}>
+                  <QRCodeGenerator />
+                </Suspense>
+              </TabsContent>
+            )}
 
         </Tabs>
       </div>
@@ -173,4 +184,13 @@ function UsersSkeleton() {
       </div>
     </div>
   );
+}
+
+function QRCodeSkeleton() {
+  return (
+    <div className="grid gap-6 md:grid-cols-2">
+      <Skeleton className="h-[400px] rounded-lg" />
+      <Skeleton className="h-[400px] rounded-lg" />
+    </div>
+  )
 }
