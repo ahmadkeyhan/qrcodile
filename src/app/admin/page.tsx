@@ -47,8 +47,7 @@ export default function AdminPage() {
             )}
             <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             {isAdmin && <TabsTrigger value="menu">منو</TabsTrigger>}
-            <TabsTrigger value="preferences">اکانت</TabsTrigger>
-            {isAdmin && <TabsTrigger value="users">کارمندان</TabsTrigger>}
+            <TabsTrigger value="users">اکانت‌ها</TabsTrigger>
           </TabsList>
 
           {isAdmin && (
@@ -82,25 +81,16 @@ export default function AdminPage() {
             </TabsContent>
           )}
 
-          <TabsContent value="preferences" className="space-y-6">
-            <h1 className="text-xl font-semibold text-center text-amber-900">
-              تنظیمات اکانت
-            </h1>
-            <Suspense fallback={<PreferencesSkeleton />}>
-              <PasswordManager />
-            </Suspense>
-          </TabsContent>
-
-          {isAdmin && (
             <TabsContent value="users" className="space-y-6">
               <h1 className="text-xl font-semibold text-center text-amber-900">
-                مدیریت کارمندان
+                {isAdmin? "مدیریت اکانت‌ها" : "مدیریت اکانت"}
               </h1>
               <Suspense fallback={<UsersSkeleton />}>
-                <UserManager />
+                <PasswordManager />
+                {isAdmin && <UserManager />}
               </Suspense>
             </TabsContent>
-          )}
+
         </Tabs>
       </div>
     </main>
