@@ -53,7 +53,7 @@ export default function AdminPage() {
 
           {isAdmin && (
             <TabsContent value="categories" className="space-y-6">
-              <h1 className="text-xl font-semibold text-slate-900">
+              <h1 className="text-xl font-semibold text-center text-amber-900">
                 مدیریت دسته‌بندی‌ها
               </h1>
               <Suspense fallback={<CategoriesSkeleton />}>
@@ -63,7 +63,7 @@ export default function AdminPage() {
           )}
 
           <TabsContent value="items" className="space-y-6">
-            <h1 className="text-xl font-semibold text-slate-900">
+            <h1 className="text-xl font-semibold text-center text-amber-900">
               مدیریت آیتم‌ها
             </h1>
             <Suspense fallback={<ItemsSkeleton />}>
@@ -73,7 +73,7 @@ export default function AdminPage() {
 
           {isAdmin && (
             <TabsContent value="menu" className="space-y-6">
-              <h1 className="text-xl font-semibold text-slate-900">
+              <h1 className="text-xl font-semibold text-center text-amber-900">
                 تنظیمات منو
               </h1>
               <Suspense fallback={<SettingsSkeleton />}>
@@ -83,7 +83,7 @@ export default function AdminPage() {
           )}
 
           <TabsContent value="preferences" className="space-y-6">
-            <h1 className="text-xl font-semibold text-slate-900">
+            <h1 className="text-xl font-semibold text-center text-amber-900">
               تنظیمات اکانت
             </h1>
             <Suspense fallback={<PreferencesSkeleton />}>
@@ -93,7 +93,7 @@ export default function AdminPage() {
 
           {isAdmin && (
             <TabsContent value="users" className="space-y-6">
-              <h1 className="text-xl font-semibold text-slate-900">
+              <h1 className="text-xl font-semibold text-center text-amber-900">
                 مدیریت کارمندان
               </h1>
               <Suspense fallback={<UsersSkeleton />}>
