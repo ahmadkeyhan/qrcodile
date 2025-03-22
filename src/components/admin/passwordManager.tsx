@@ -73,13 +73,9 @@ export default function PasswordManager() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>تغییر کلمه‌ی عبور</CardTitle>
-        <CardDescription>کلمه‌ی عبور خود را به‌روزرسانی کنید.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
+          <h3 className="font-medium">تغییر کلمه‌ی عبور</h3>
           <div className="space-y-2">
             <Label htmlFor="current-password">کلمه‌ی عبور فعلی</Label>
             <Input
@@ -113,12 +109,11 @@ export default function PasswordManager() {
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="bg-amber-500" disabled={isLoading}>
             {isLoading ? "در حال به‌روزرسانی" : "به‌روزرسانی کلمه‌ی عبور"}
           </Button>
         </form>
-      </CardContent>
-    </Card>
+    </div>
   )
 }
 

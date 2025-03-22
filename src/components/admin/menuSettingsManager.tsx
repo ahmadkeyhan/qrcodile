@@ -93,7 +93,7 @@ export default function MenuSettingsManager() {
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="bg-amber-500" disabled={isLoading}>
             {isLoading ? (
               "در حال ذخیره..."
             ) : (

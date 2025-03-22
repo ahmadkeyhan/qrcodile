@@ -70,14 +70,14 @@ export default function AdminPage() {
           </div>
         </header>
         <Tabs defaultValue="items" className="space-y-6">
-          <TabsList className="inline-flex w-ful max-w-md mx-auto">
+          <TabsList className="inline-flex w-full max-w-md mx-auto">
             <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             {isAdmin && (
               <TabsTrigger value="categories">دسته‌بندی‌ها</TabsTrigger>
             )}
             {isAdmin && <TabsTrigger value="menu">منو</TabsTrigger>}
-            <TabsTrigger value="preferences">تنظیمات</TabsTrigger>
-            {isAdmin && <TabsTrigger value="users">کارکنان</TabsTrigger>}
+            <TabsTrigger value="preferences">اکانت</TabsTrigger>
+            {isAdmin && <TabsTrigger value="users">کارمندان</TabsTrigger>}
           </TabsList>
 
           <TabsContent value="items" className="space-y-6">
@@ -102,9 +102,9 @@ export default function AdminPage() {
 
           {isAdmin && (
             <TabsContent value="menu" className="space-y-6">
-              <h2 className="text-xl font-semibold text-slate-900">
+              <h1 className="text-xl font-semibold text-slate-900">
                 تنظیمات منو
-              </h2>
+              </h1>
               <Suspense fallback={<SettingsSkeleton />}>
                 <MenuSettingsManager />
               </Suspense>
@@ -112,9 +112,9 @@ export default function AdminPage() {
           )}
 
           <TabsContent value="preferences" className="space-y-6">
-            <h2 className="text-xl font-semibold text-slate-900">
+            <h1 className="text-xl font-semibold text-slate-900">
               تنظیمات اکانت
-            </h2>
+            </h1>
             <Suspense fallback={<PreferencesSkeleton />}>
               <PasswordManager />
             </Suspense>
@@ -122,9 +122,9 @@ export default function AdminPage() {
 
           {isAdmin && (
             <TabsContent value="users" className="space-y-6">
-              <h2 className="text-xl font-semibold text-slate-900">
-                مدیریت کارکنان
-              </h2>
+              <h1 className="text-xl font-semibold text-slate-900">
+                مدیریت کارمندان
+              </h1>
               <Suspense fallback={<UsersSkeleton />}>
                 <UserManager />
               </Suspense>

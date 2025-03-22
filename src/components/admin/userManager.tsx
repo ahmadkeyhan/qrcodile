@@ -147,11 +147,13 @@ export default function UserManager() {
   return (
     <div className="space-y-6">
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
-        <h3 className="font-medium">Add New Employee</h3>
+        <h3 className="font-medium">
+          افزودن کارمند جدید
+        </h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Input
-              placeholder="Name"
+              placeholder="نام کاربری(ترجیحاً لاتین)"
               value={newUser.name}
               onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
               required
@@ -159,7 +161,7 @@ export default function UserManager() {
           </div>
           <div>
             <Input
-              placeholder="Password"
+              placeholder="کلمه‌ی عبور"
               type="password"
               value={newUser.password}
               onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
@@ -169,15 +171,15 @@ export default function UserManager() {
         </div>
         <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
           <Plus className="w-4 h-4 mr-2" />
-          Add Employee
+          افزودن کارمند
         </Button>
       </form>
 
       <div className="space-y-2">
-        <h3 className="font-medium text-slate-700">Employees</h3>
+        <h3 className="font-medium text-slate-700">لیست کارمندان</h3>
         {users.length === 0 ? (
           <div className="text-center py-8 text-slate-500">
-            <p>No employees yet. Add your first employee above.</p>
+            <p>کارمندی ثبت نشده‌است.</p>
           </div>
         ) : (
           users.filter((user) => user.role === "employee").map((user) =>
@@ -188,7 +190,7 @@ export default function UserManager() {
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div>
                         <Input
-                          placeholder="Name"
+                          placeholder="نام کاربری"
                           value={editForm.name}
                           onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                           required
@@ -196,7 +198,7 @@ export default function UserManager() {
                       </div>
                       <div>
                         <Input
-                          placeholder="New Password (leave blank to keep current)"
+                          placeholder="کلمه‌ی عبور جدید"
                           type="password"
                           value={editForm.password}
                           onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
@@ -206,11 +208,11 @@ export default function UserManager() {
                     <div className="flex gap-2">
                       <Button type="submit" size="sm" className="bg-green-500 hover:bg-green-600">
                         <Save className="w-4 h-4 mr-2" />
-                        Save
+                        ذخیره
                       </Button>
                       <Button type="button" variant="outline" size="sm" onClick={() => setEditingId(null)}>
                         <X className="w-4 h-4 mr-2" />
-                        Cancel
+                        لغو
                       </Button>
                     </div>
                   </form>
@@ -219,11 +221,11 @@ export default function UserManager() {
             ) : (
               <Card key={user.id} className="overflow-hidden mb-3">
                 <CardContent className="p-0">
-                  <div className="p-4 flex justify-between items-center">
+                  <div className="p-4 flex flex-row-reverse justify-between items-center">
                     <div>
                       <h3 className="font-medium">{user.name}</h3>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-row-reverse gap-2">
                       <Button variant="ghost" size="sm" onClick={() => handleEditClick(user)}>
                         <Edit className="w-4 h-4" />
                         <span className="sr-only">Edit</span>
