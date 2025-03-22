@@ -12,6 +12,7 @@ import CategoryManager from "@/components/admin/categoryManager"
 import MenuItemManager from "@/components/admin/menuItemManager"
 import PasswordManager from "@/components/admin/passwordManager"
 import UserManager from "@/components/admin/userManager"
+import MenuSettingsManager from "@/components/admin/menuSettingsManager"
 
 export default function AdminPage() {
   const { data: session, status } = useSession()
@@ -69,6 +70,7 @@ export default function AdminPage() {
           <TabsList className="inline-flex w-ful max-w-md mx-auto">
             <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             {isAdmin && <TabsTrigger value="categories">دسته‌بندی‌ها</TabsTrigger>}
+            {isAdmin && <TabsTrigger value="menu">منو</TabsTrigger>}
             <TabsTrigger value="preferences">تنظیمات</TabsTrigger>
             {isAdmin && <TabsTrigger value="users">کارکنان</TabsTrigger>}
           </TabsList>
@@ -85,6 +87,15 @@ export default function AdminPage() {
               <h1 className="text-xl font-semibold text-slate-900">مدیریت دسته‌بندی‌ها</h1>
               <Suspense fallback={<CategoriesSkeleton />}>
                 <CategoryManager />
+              </Suspense>
+            </TabsContent>
+          )}
+
+          {isAdmin && (
+            <TabsContent value="menu" className="space-y-6">
+              <h2 className="text-xl font-semibold text-slate-900">تنظیمات منو</h2>
+              <Suspense fallback={<SettingsSkeleton />}>
+                <MenuSettingsManager />
               </Suspense>
             </TabsContent>
           )}
@@ -151,6 +162,15 @@ function CategoriesSkeleton() {
             <Skeleton key={i} className="h-16 w-full rounded-lg" />
           ))}
       </div>
+    </div>
+  )
+}
+
+function SettingsSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full max-w-md" />
+      <Skeleton className="h-40 w-full rounded-lg" />
     </div>
   )
 }
