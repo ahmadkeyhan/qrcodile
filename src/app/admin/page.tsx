@@ -8,6 +8,7 @@ import { LogOut, ListTodo, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import AdminHeader from "@/components/admin/adminHeader";
 import CategoryManager from "@/components/admin/categoryManager";
 import MenuItemManager from "@/components/admin/menuItemManager";
 import PasswordManager from "@/components/admin/passwordManager";
@@ -35,59 +36,20 @@ export default function AdminPage() {
 
   const isAdmin = session?.user?.role === "admin";
 
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.push("/");
-  };
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
       <div className="container px-4 py-6 mx-auto max-w-5xl">
-        <header className="flex items-center justify-between mb-8">
-          <div className="flex items-center">
-            <Link href="/">
-              <Button variant="outline" size="sm">
-                نمایش منو
-                <ListTodo className="w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
-          <div className="flex items-center gap-4">
-            {session?.user && (
-              <div className="inline-flex flex-row-reverse gap-2 items-center justify-center rounded-md text-sm border border-input h-9 px-3 rounded-md text-slate-600">
-                {session.user.name}
-                <User className="w-4 h-4" />
-              </div>
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="text-slate-700"
-            >
-              خروج
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-        </header>
-        <Tabs defaultValue="items" className="space-y-6">
+        <AdminHeader />
+        <Tabs defaultValue="categories" className="space-y-6">
           <TabsList className="inline-flex w-full max-w-md mx-auto">
-            <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             {isAdmin && (
               <TabsTrigger value="categories">دسته‌بندی‌ها</TabsTrigger>
             )}
+            <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             {isAdmin && <TabsTrigger value="menu">منو</TabsTrigger>}
             <TabsTrigger value="preferences">اکانت</TabsTrigger>
             {isAdmin && <TabsTrigger value="users">کارمندان</TabsTrigger>}
           </TabsList>
-
-          <TabsContent value="items" className="space-y-6">
-            <h1 className="text-xl font-semibold text-slate-900">
-              مدیریت آیتم‌ها
-            </h1>
-            <Suspense fallback={<ItemsSkeleton />}>
-              <MenuItemManager isAdmin={isAdmin} />
-            </Suspense>
-          </TabsContent>
 
           {isAdmin && (
             <TabsContent value="categories" className="space-y-6">
@@ -99,6 +61,15 @@ export default function AdminPage() {
               </Suspense>
             </TabsContent>
           )}
+
+          <TabsContent value="items" className="space-y-6">
+            <h1 className="text-xl font-semibold text-slate-900">
+              مدیریت آیتم‌ها
+            </h1>
+            <Suspense fallback={<ItemsSkeleton />}>
+              <MenuItemManager isAdmin={isAdmin} />
+            </Suspense>
+          </TabsContent>
 
           {isAdmin && (
             <TabsContent value="menu" className="space-y-6">
