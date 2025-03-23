@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Download, QrCode, RefreshCw, ImagePlus } from "lucide-react";
+import { Download, QrCode, ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,12 +14,12 @@ import ImageUploader from "./imageUploader";
 
 export default function QRCodeGenerator() {
   const [url, setUrl] = useState("");
-  const [downloadSize, setDownloadSize] = useState(300);
+  const [previewSize, setPreviewSize] = useState(200); // Fixed size for preview
+  const [downloadSize, setDownloadSize] = useState(200); // Size for downloads
   const [fgColor, setFgColor] = useState("#000000");
   const [bgColor, setBgColor] = useState("#FFFFFF");
   const [logoImage, setLogoImage] = useState("");
   const [logoSize, setLogoSize] = useState(20);
-  const [isGenerating, setIsGenerating] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -32,67 +32,68 @@ export default function QRCodeGenerator() {
   }, []);
 
   // Calculate logo size as percentage of QR code size
-  const getLogoSizePixels = () => {
-    return Math.round((logoSize / 100) * downloadSize);
+  const getLogoSizePixels = (forDownload = false) => {
+    const baseSize = forDownload ? downloadSize : previewSize;
+    return Math.round((logoSize / 100) * baseSize);
   };
 
-  const handleDownloadPNG = async () => {
+  const handleDownloadPNG = () => {
     if (!qrRef.current) return;
 
     try {
+      const svg = qrRef.current.querySelector("svg");
+      if (!svg) return;
+
+      // Create a new canvas
       const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Set canvas size to match download size
       canvas.width = downloadSize;
       canvas.height = downloadSize;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Could not get canvas context");
-      }
 
-      // Get the SVG element
-      const svgElement = qrRef.current.querySelector("svg");
-      if (!svgElement) {
-        throw new Error("SVG element not found");
-      }
-
-      // Create a data URL from the SVG
-      const svgData = new XMLSerializer().serializeToString(svgElement);
+      // Convert SVG to a data URL
+      const svgData = new XMLSerializer().serializeToString(svg);
       const svgBlob = new Blob([svgData], {
         type: "image/svg+xml;charset=utf-8",
       });
       const svgUrl = URL.createObjectURL(svgBlob);
 
-      // Create an image from the SVG
+      // Create a new image to draw on canvas
       const img = new Image();
-
       img.crossOrigin = "anonymous";
 
-      // Wait for the image to load
-      await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = svgUrl;
-      });
+      // When image loads, draw it on canvas and create download
+      img.onload = () => {
+        // Draw the QR code, scaling to the download size
+        ctx.drawImage(img, 0, 0, downloadSize, downloadSize);
 
-      // Draw the image to the canvas
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, downloadSize, downloadSize);
+        // If there's a logo, draw it on top
+        if (logoImage) {
+          const logoImg = new Image();
+          logoImg.crossOrigin = "anonymous";
+          logoImg.onload = () => {
+            // Calculate position to center the logo
+            const logoSizePixels = getLogoSizePixels(true);
+            const x = (downloadSize - logoSizePixels) / 2;
+            const y = (downloadSize - logoSizePixels) / 2;
 
-      // Convert canvas to PNG
-      const pngUrl = canvas.toDataURL("image/png");
+            // Draw logo on top of QR code
+            ctx.drawImage(logoImg, x, y, logoSizePixels, logoSizePixels);
 
-      // Create download link
-      const downloadLink = document.createElement("a");
-      downloadLink.download = `qr-code-${url}.png`;
-      downloadLink.href = pngUrl;
-      downloadLink.click();
-      // Clean up
-      URL.revokeObjectURL(svgUrl);
+            // Convert to PNG and trigger download
+            finalizePngDownload(canvas);
+          };
+          logoImg.src = logoImage;
+        } else {
+          // No logo, just finalize the download
+          finalizePngDownload(canvas);
+        }
+      };
 
-      toast({
-        title: "QR Code Downloaded",
-        description: "Your QR code has been downloaded as PNG.",
-      });
+      // Load the QR code image
+      img.src = svgUrl;
     } catch (error) {
       console.error("Error downloading PNG:", error);
       toast({
@@ -103,23 +104,93 @@ export default function QRCodeGenerator() {
     }
   };
 
+  // Add this helper function for PNG download
+  const finalizePngDownload = (canvas: HTMLCanvasElement) => {
+    try {
+      const pngFile = canvas.toDataURL("image/png");
+
+      // Create download link
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `qr-code-${url}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+
+      toast({
+        title: "QR Code Downloaded",
+        description: "Your QR code has been downloaded as PNG.",
+      });
+    } catch (error) {
+      console.error("Error finalizing PNG download:", error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to create downloadable PNG.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleDownloadSVG = () => {
     if (!qrRef.current) return;
 
     try {
-      const svgElement = qrRef.current.querySelector("svg");
-      if (!svgElement) {
-        throw new Error("SVG element not found");
+      const svg = qrRef.current.querySelector("svg");
+      if (!svg) return;
+
+      // Clone the SVG to avoid modifying the displayed one
+      const clonedSvg = svg.cloneNode(true) as SVGElement;
+
+      // If there's a logo, we need to embed it directly in the SVG
+      if (logoImage && getImageSettings()) {
+        // Find the image element in the cloned SVG
+        const imageElement = clonedSvg.querySelector("image");
+
+        if (imageElement) {
+          // Create a new image to load the logo
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+            // Create a canvas to convert the image to a data URL
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+
+            // Set canvas size to match logo size
+            const logoSize = getLogoSizePixels(true);
+            canvas.width = logoSize;
+            canvas.height = logoSize;
+
+            // Draw the logo on the canvas
+            ctx.drawImage(img, 0, 0, logoSize, logoSize);
+
+            // Convert to data URL
+            const dataUrl = canvas.toDataURL("image/png");
+
+            // Update the image href in the SVG
+            imageElement.setAttribute("href", dataUrl);
+
+            // Now finalize the SVG download
+            finalizeSvgDownload(clonedSvg);
+          };
+          img.src = logoImage;
+        } else {
+          finalizeSvgDownload(clonedSvg);
+        }
+      } else {
+        finalizeSvgDownload(clonedSvg);
       }
+    } catch (error) {
+      console.error("Error downloading SVG:", error);
+      toast({
+        title: "Download Failed",
+        description: "Failed to download QR code as SVG.",
+        variant: "destructive",
+      });
+    }
+  };
 
-      // Clone the SVG to modify it
-      const clonedSvg = svgElement.cloneNode(true) as SVGElement;
-
-      // Set the width and height to the download size
-      clonedSvg.setAttribute("width", downloadSize.toString());
-      clonedSvg.setAttribute("height", downloadSize.toString());
-
-      const svgData = new XMLSerializer().serializeToString(clonedSvg);
+  const finalizeSvgDownload = (svgElement: SVGElement) => {
+    try {
+      const svgData = new XMLSerializer().serializeToString(svgElement);
       const svgBlob = new Blob([svgData], {
         type: "image/svg+xml;charset=utf-8",
       });
@@ -137,20 +208,13 @@ export default function QRCodeGenerator() {
         description: "Your QR code has been downloaded as SVG.",
       });
     } catch (error) {
-      console.error("Error downloading SVG:", error);
+      console.error("Error finalizing SVG download:", error);
       toast({
         title: "Download Failed",
-        description: "Failed to download QR code as SVG.",
+        description: "Failed to create downloadable SVG.",
         variant: "destructive",
       });
     }
-  };
-
-  const generateQRCode = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-    }, 500);
   };
 
   // Prepare image settings for QRCodeSVG
@@ -159,8 +223,8 @@ export default function QRCodeGenerator() {
 
     return {
       src: logoImage,
-      height: getLogoSizePixels(),
-      width: getLogoSizePixels(),
+      height: getLogoSizePixels(false),
+      width: getLogoSizePixels(false),
       excavate: true,
     };
   };
@@ -169,7 +233,7 @@ export default function QRCodeGenerator() {
     <div className="grid gap-6 md:grid-cols-2">
       <Card>
         <CardContent className="pt-6">
-          <Tabs className="mb-4" defaultValue="basic">
+          <Tabs defaultValue="basic">
             <TabsList className="mb-4">
               <TabsTrigger value="basic">
                 <QrCode />
@@ -247,19 +311,6 @@ export default function QRCodeGenerator() {
               )}
             </TabsContent>
           </Tabs>
-          <Button onClick={generateQRCode} className="bg-amber-500">
-            {isGenerating ? (
-              <div className="flex flex-row-reverse gap-2 items-center">
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                <p dir="rtl">در حال ایجاد...</p>
-              </div>
-            ) : (
-              <div className="flex flex-row-reverse gap-2 items-center">
-                <QrCode className="w-4 h-4" />
-                <p>ایجاد کد کیوآر</p>
-              </div>
-            )}
-          </Button>
         </CardContent>
       </Card>
 
@@ -268,11 +319,14 @@ export default function QRCodeGenerator() {
           <div
             ref={qrRef}
             className="mb-6 p-4 bg-white rounded-lg shadow-sm border flex items-center justify-center"
-            style={{ width: "300px", height: "300px" }}
+            style={{
+              width: `${previewSize + 32}px`,
+              height: `${previewSize + 32}px`,
+            }}
           >
             <QRCodeSVG
               value={url}
-              size={250}
+              size={previewSize}
               bgColor={bgColor}
               fgColor={fgColor}
               level="H"
