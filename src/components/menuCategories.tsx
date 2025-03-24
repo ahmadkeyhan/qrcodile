@@ -131,7 +131,7 @@ export default function MenuCategories() {
   return (
     <div className="space-y-6">
       <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide">
-        {categories.map((category, index) => (
+        {categories.map((category) => (
           <Badge
             key={category.id}
             variant={activeCategory === category.id ? "default" : "outline"}
