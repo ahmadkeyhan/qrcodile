@@ -79,11 +79,9 @@ const itemVariants: Variants = {
 export default function MenuCategories() {
   const [categories, setCategories] = useState<category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string>();
-  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [items, setItems] = useState<item[]>([]);
   const [selectedItem, setSelectedItem] = useState<item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [slideRight, setSlideRight] = useState(true);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -142,14 +140,7 @@ export default function MenuCategories() {
                 ? "bg-amber-500 hover:bg-amber-600"
                 : "hover:bg-amber-100 border-amber-200"
             }`}
-            onClick={() => {
-              console.log(index, activeIndex);
-              // if (index < activeIndex) {setSlideRight(false)}
-              setSlideRight(index < activeIndex);
-              setActiveIndex(index);
-              setActiveCategory(category.id);
-              // console.log(slideRight)
-            }}
+            onClick={() => setActiveCategory(category.id)}
           >
             {category.name}
           </Badge>

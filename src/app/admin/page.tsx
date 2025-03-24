@@ -1,11 +1,8 @@
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import { LogOut, ListTodo, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import AdminHeader from "@/components/admin/adminHeader";
@@ -158,15 +155,6 @@ function SettingsSkeleton() {
     <div className="space-y-4">
       <Skeleton className="h-10 w-full max-w-md" />
       <Skeleton className="h-40 w-full rounded-lg" />
-    </div>
-  );
-}
-
-function PreferencesSkeleton() {
-  return (
-    <div className="space-y-4">
-      <Skeleton className="h-10 w-full max-w-md" />
-      <Skeleton className="h-64 w-full rounded-lg" />
     </div>
   );
 }

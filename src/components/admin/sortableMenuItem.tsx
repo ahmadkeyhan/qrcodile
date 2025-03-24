@@ -3,7 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import Image from "next/image"
-import { Edit, Trash2, GripVertical } from "lucide-react"
+import { GripVertical } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
@@ -34,7 +34,7 @@ interface SortableMenuItemProps {
   onDelete: (id: string, name: string) => void
 }
 
-export default function SortableMenuItem({ item, category, onEdit, onDelete }: SortableMenuItemProps) {
+export default function SortableMenuItem({ item }: SortableMenuItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id || "" })
 
   const style = {

@@ -14,7 +14,8 @@ import ImageUploader from "./imageUploader";
 
 export default function QRCodeGenerator() {
   const [url, setUrl] = useState("");
-  const [previewSize, setPreviewSize] = useState(200); // Fixed size for preview
+  // const [previewSize, setPreviewSize] = useState(200); // Fixed size for preview
+  const previewSize = 200;
   const [downloadSize, setDownloadSize] = useState(200); // Size for downloads
   const [fgColor, setFgColor] = useState("#000000");
   const [bgColor, setBgColor] = useState("#FFFFFF");

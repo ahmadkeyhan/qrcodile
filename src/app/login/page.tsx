@@ -41,10 +41,10 @@ export default function LoginPage() {
         router.push("/admin")
         router.refresh()
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: error.message,
         variant: "destructive",
       })
     } finally {

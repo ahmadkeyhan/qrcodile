@@ -38,8 +38,6 @@ import ImageUploader from "./imageUploader"
 import Image from "next/image"
 import SortableMenuItem from "./sortableMenuItem"
 import { deleteImage } from "@/lib/imageUtils"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import AvailabilityToggle from "./availabilityToggle"
 
 interface item {

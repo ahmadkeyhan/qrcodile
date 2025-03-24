@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
 export default function AdminHeader() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
   const handleLogout = async () => {

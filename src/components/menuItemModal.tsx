@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
-import { X } from "lucide-react"
 import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
