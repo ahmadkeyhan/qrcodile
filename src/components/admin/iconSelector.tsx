@@ -78,10 +78,10 @@ export default function IconSelector({ value, onChange }: IconSelectorProps) {
             {selectedIcon ? (
               <>
                 {IconComponent && <IconComponent className="h-4 w-4" />}
-                <span>{selectedIcon}</span>
+                {/* <span>{selectedIcon}</span> */}
               </>
             ) : (
-              "Select icon..."
+              "انتخاب آیکون(اختیاری)"
             )}
           </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -89,9 +89,9 @@ export default function IconSelector({ value, onChange }: IconSelectorProps) {
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search icons..." />
+          <CommandInput placeholder="جست‌وجوی آیکون" />
           <CommandList>
-            <CommandEmpty>No icon found.</CommandEmpty>
+            <CommandEmpty>آیکونی یافت نشد</CommandEmpty>
             <CommandGroup className="max-h-[300px] overflow-y-auto">
               <CommandItem
                 key="none"
@@ -100,7 +100,7 @@ export default function IconSelector({ value, onChange }: IconSelectorProps) {
                 className="flex items-center gap-2"
               >
                 <Check className={cn("mr-2 h-4 w-4", !selectedIcon ? "opacity-100" : "opacity-0")} />
-                <span>None</span>
+                <span>بدون آیکون</span>
               </CommandItem>
               {foodIcons.map((iconName) => {
                 const Icon = (LucideIcons as any)[iconName]
@@ -113,7 +113,6 @@ export default function IconSelector({ value, onChange }: IconSelectorProps) {
                   >
                     <Check className={cn("mr-2 h-4 w-4", selectedIcon === iconName ? "opacity-100" : "opacity-0")} />
                     {Icon && <Icon className="h-4 w-4" />}
-                    <span>{iconName}</span>
                   </CommandItem>
                 )
               })}
