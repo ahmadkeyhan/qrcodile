@@ -24,7 +24,14 @@ interface SortableCategoryItemProps {
 }
 
 export default function SortableCategoryItem({ category, onEdit, onDelete, sortDisabled }: SortableCategoryItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: category.id })
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: category.id,
+    // Add these properties to improve touch handling
+    data: {
+      type: "category",
+      category,
+    },
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -38,7 +45,7 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
   const LabIconComponent = category.iconName && category.iconName.toLowerCase()[0] === category.iconName[0] ? (LabIcons as any)[category.iconName] : null
 
   return (
-    <div ref={setNodeRef} style={style} className="mb-3">
+    <div ref={setNodeRef} style={style} className="mb-3 touch-manipulation">
       <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
         <CardContent className="p-0">
           <div className="p-3 flex flex-row-reverse justify-between items-center">
@@ -46,7 +53,7 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
               <Button
                 variant="ghost"
                 size="sm"
-                className="cursor-grab active:cursor-grabbing p-1 h-auto"
+                className="cursor-grab active:cursor-grabbing p-1 h-auto touch-manipulation"
                 {...attributes}
                 {...listeners}
                 disabled={sortDisabled}

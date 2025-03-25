@@ -8,6 +8,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -92,13 +93,22 @@ export default function MenuItemManager({isAdmin = true}) {
   // Make sure we're destructuring the toast function from useToast
   const { toast } = useToast()
 
-  // Set up sensors for drag and drop
+  // Set up sensors for drag and drop with improved mobile support
   const sensors = useSensors(
+    // PointerSensor works for both mouse and touch on modern browsers
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8, // 8px movement required before drag starts
       },
     }),
+    // Add TouchSensor as a fallback for older mobile browsers
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250, // Small delay to distinguish between tap and drag
+        tolerance: 5, // Allow small movements without canceling tap
+      },
+    }),
+    // Keep keyboard support for accessibility
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),

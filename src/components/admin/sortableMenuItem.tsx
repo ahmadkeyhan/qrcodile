@@ -35,7 +35,14 @@ interface SortableMenuItemProps {
 }
 
 export default function SortableMenuItem({ item }: SortableMenuItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id || "" })
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: item.id || "",
+    // Add these properties to improve touch handling
+    data: {
+      type: "menuItem",
+      item,
+    },
+  })
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -45,14 +52,14 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="mb-3">
+    <div ref={setNodeRef} style={style} className="mb-3 touch-manipulation">
       <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
         <CardContent className="p-0">
           <div className="p-3 flex flex-row-reverse gap-3">
             <Button
               variant="ghost"
               size="sm"
-              className="cursor-grab active:cursor-grabbing p-1 h-auto self-center"
+              className="cursor-grab active:cursor-grabbing p-1 h-auto self-center touch-manipulation"
               {...attributes}
               {...listeners}
             >
