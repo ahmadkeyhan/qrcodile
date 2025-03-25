@@ -31,19 +31,22 @@ import {
 } from "@/lib/data"
 import { useToast } from "@/components/ui/toastContext"
 import SortableCategoryItem from "./sortableCategoryItem"
+import IconSelector from "./iconSelector"
 
 interface category {
     id: string, 
-    name: string, 
+    name: string,
+    iconName: string, 
     description: string,
     order: number
 }
 
+
 export default function CategoryManager() {
   const [categories, setCategories] = useState<category[]>([])
-  const [newCategory, setNewCategory] = useState({ name: "", description: "" })
+  const [newCategory, setNewCategory] = useState({ name: "", description: "", iconName: "" })
   const [editingId, setEditingId] = useState<string>("")
-  const [editForm, setEditForm] = useState({ name: "", description: "" })
+  const [editForm, setEditForm] = useState({ name: "", description: "", iconName: "" })
   const [isReordering, setIsReordering] = useState(false)
 
   // Set up sensors for drag and drop
@@ -75,7 +78,7 @@ export default function CategoryManager() {
     try {
        // Set order to be the last item
       await createCategory({...newCategory,order: categories.length})
-      setNewCategory({ name: "", description: "" })
+      setNewCategory({ name: "", description: "", iconName: "" })
       loadCategories()
       toast({
         title: "دسته‌بندی‌ ایجاد شد!",
@@ -92,7 +95,7 @@ export default function CategoryManager() {
 
   const handleEditClick = (category: category) => {
     setEditingId(category.id)
-    setEditForm({ name: category.name, description: category.description })
+    setEditForm({ name: category.name, description: category.description, iconName: category.iconName })
   }
 
   const handleUpdateSubmit = async (e: FormEvent) => {
@@ -180,13 +183,19 @@ export default function CategoryManager() {
       <form onSubmit={handleCreateSubmit} className="space-y-4 p-4 border border-slate-200 rounded-lg bg-white">
         <h3 className="font-medium">افزودن دسته‌بندی جدید</h3>
         <div className="flex flex-grow w-full gap-4 flex-col sm:flex-row-reverse">
-          <div className="w-full">
+          <div className="flex flex-col gap-4 w-full">
             <Input
               placeholder="عنوان دسته‌بندی"
               value={newCategory.name}
               onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
               required
             />
+            <div className="sm:col-span-2">
+              <IconSelector
+                value={newCategory.iconName}
+                onChange={(iconName) => setNewCategory({ ...newCategory, iconName })}
+              />
+            </div>
           </div>
           <div className="w-full">
             <Textarea
@@ -211,13 +220,19 @@ export default function CategoryManager() {
                   <CardContent className="p-0">
                     <form onSubmit={handleUpdateSubmit} className="p-4 space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <div>
+                        <div className="flex flex-col gap-4">
                           <Input
                             placeholder="عنوان دسته‌بندی"
                             value={editForm.name}
                             onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                             required
                           />
+                          <div className="sm:col-span-2">
+                            <IconSelector
+                              value={editForm.iconName}
+                              onChange={(iconName) => setEditForm({ ...editForm, iconName })}
+                            />
+                          </div>
                         </div>
                         <div>
                           <Textarea
