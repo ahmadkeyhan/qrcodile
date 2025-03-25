@@ -55,9 +55,9 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
                 <span className="sr-only">Drag to reorder</span>
               </Button>
               <div className="flex flex-col gap-1">
-                <div className="flex gap-2">
-                  {IconComponent && <IconComponent className="w-5 h-5 text-amber-500" />}
-                  {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-5 h-5 text-amber-500" />}
+                <div className="flex flex-row-reverse gap-2">
+                  {IconComponent && <IconComponent className="w-5 h-5" />}
+                  {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-5 h-5" />}
                   <h3 className="font-medium">{category.name}</h3>
                 </div>
                 {category.description && <p className="text-sm text-slate-500">{category.description}</p>}
