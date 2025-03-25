@@ -8,6 +8,7 @@ import { Badge } from "./ui/badge";
 import MenuItemCard from "./menuItemCard";
 import MenuItemModal from "./menuItemModal";
 import * as LucideIcons from "lucide-react";
+import * as LabIcons from "@lucide/lab"
 
 interface category {
   id: string;
@@ -135,7 +136,9 @@ export default function MenuCategories() {
       <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide">
         {categories.map((category) => {
           // Dynamically get the icon component if iconName exists
-          const IconComponent = category.iconName ? (LucideIcons as any)[category.iconName] : null
+          const IconComponent = category.iconName && category.iconName.toLowerCase()[0] !== category.iconName[0] ? (LucideIcons as any)[category.iconName] : null
+          const LabIconComponent = category.iconName && category.iconName.toLowerCase()[0] === category.iconName[0] ? (LabIcons as any)[category.iconName] : null
+
           return (
             <Badge
               key={category.id}
@@ -149,6 +152,7 @@ export default function MenuCategories() {
             >
               <div className="flex flex-row-reverse items-center gap-1.5">
                 {IconComponent && <IconComponent className="w-4 h-4" />}
+                                  {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-4 h-4" />}
                 {category.name}
               </div>
             </Badge>
