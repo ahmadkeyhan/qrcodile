@@ -136,8 +136,8 @@ export default function IconSelector({ value, onChange }: IconSelectorProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
-          <div className="flex items-start gap-2">
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between bg-amber-50 border-amber-200">
+          <div className="flex flex-row-reverse items-start gap-2">
             {selectedIcon && !labIcon ? (
               <>
                 {IconComponent && <IconComponent className="h-4 w-4" />}
