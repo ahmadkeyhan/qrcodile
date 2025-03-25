@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import * as LucideIcons from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+// import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -92,28 +93,26 @@ export default function IconSelector({ value, onChange }: IconSelectorProps) {
           <CommandInput placeholder="جست‌وجوی آیکون" />
           <CommandList>
             <CommandEmpty>آیکونی یافت نشد</CommandEmpty>
-            <CommandGroup className="max-h-[300px] overflow-y-auto">
-              <CommandItem
-                key="none"
-                value="none"
-                onSelect={() => handleSelect("")}
-                className="flex items-center gap-2"
+            <CommandGroup className=" overflow-y-auto">
+              <div
+                className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                onClick={() => handleSelect("")}
               >
                 <Check className={cn("mr-2 h-4 w-4", !selectedIcon ? "opacity-100" : "opacity-0")} />
                 <span>بدون آیکون</span>
-              </CommandItem>
+              </div>
               {foodIcons.map((iconName) => {
                 const Icon = (LucideIcons as any)[iconName]
                 return (
-                  <CommandItem
+                  <div
                     key={iconName}
-                    value={iconName}
-                    onSelect={() => handleSelect(iconName)}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                    onClick={() => handleSelect(iconName)}
                   >
                     <Check className={cn("mr-2 h-4 w-4", selectedIcon === iconName ? "opacity-100" : "opacity-0")} />
                     {Icon && <Icon className="h-4 w-4" />}
-                  </CommandItem>
+                    <span>{iconName}</span>
+                  </div>
                 )
               })}
             </CommandGroup>
