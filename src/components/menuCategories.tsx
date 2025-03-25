@@ -150,9 +150,9 @@ export default function MenuCategories() {
               }`}
               onClick={() => setActiveCategory(category.id)}
             >
-              <div className="flex flex-row-reverse items-center gap-1.5">
+              <div className="flex items-center gap-1.5">
                 {IconComponent && <IconComponent className="w-4 h-4" />}
-                                  {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-4 h-4" />}
+                {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-4 h-4" />}
                 {category.name}
               </div>
             </Badge>
