@@ -7,11 +7,13 @@ import { getCategoryItems } from "@/lib/data";
 import { Badge } from "./ui/badge";
 import MenuItemCard from "./menuItemCard";
 import MenuItemModal from "./menuItemModal";
+import * as LucideIcons from "lucide-react";
 
 interface category {
   id: string;
   name: string;
   description: string;
+  iconName: string;
 }
 interface item {
   id: string;
@@ -131,20 +133,27 @@ export default function MenuCategories() {
   return (
     <div className="space-y-6">
       <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide">
-        {categories.map((category) => (
-          <Badge
-            key={category.id}
-            variant={activeCategory === category.id ? "default" : "outline"}
-            className={`px-4 py-2 text-sm rounded-full cursor-pointer transition-all duration-300 snap-start ${
-              activeCategory === category.id
-                ? "bg-amber-500 hover:bg-amber-600"
-                : "hover:bg-amber-100 border-amber-200"
-            }`}
-            onClick={() => setActiveCategory(category.id)}
-          >
-            {category.name}
-          </Badge>
-        ))}
+        {categories.map((category) => {
+          // Dynamically get the icon component if iconName exists
+          const IconComponent = category.iconName ? (LucideIcons as any)[category.iconName] : null
+          return (
+            <Badge
+              key={category.id}
+              variant={activeCategory === category.id ? "default" : "outline"}
+              className={`px-4 py-2 text-sm rounded-full cursor-pointer transition-all duration-300 snap-start ${
+                activeCategory === category.id
+                  ? "bg-amber-500 hover:bg-amber-600"
+                  : "hover:bg-amber-100 border-amber-200"
+              }`}
+              onClick={() => setActiveCategory(category.id)}
+            >
+              <div className="flex flex-row-reverse items-center gap-1.5">
+                {IconComponent && <IconComponent className="w-4 h-4" />}
+                {category.name}
+              </div>
+            </Badge>
+          )
+      })}
       </div>
 
       <div className="relative min-h-[200px] overflow-hidden">
