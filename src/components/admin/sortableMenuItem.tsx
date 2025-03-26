@@ -59,7 +59,7 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="cursor-grab active:cursor-grabbing p-1 h-auto self-center touch-manipulation"
+              className="cursor-grab active:cursor-grabbing p-1 h-auto self-center touch-none select-none"
               {...attributes}
               {...listeners}
               onTouchStart={(e) => {

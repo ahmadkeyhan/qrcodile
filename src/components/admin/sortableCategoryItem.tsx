@@ -53,7 +53,7 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
               <Button
                 variant="ghost"
                 size="sm"
-                className="cursor-grab active:cursor-grabbing p-1 h-auto touch-manipulation"
+                className="cursor-grab active:cursor-grabbing p-1 h-auto touch-none select-none"
                 {...attributes}
                 {...listeners}
                 // Add this to prevent default touch behavior on Android
