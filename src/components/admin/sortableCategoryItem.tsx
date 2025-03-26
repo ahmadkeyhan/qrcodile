@@ -45,7 +45,7 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
   const LabIconComponent = category.iconName && category.iconName.toLowerCase()[0] === category.iconName[0] ? (LabIcons as any)[category.iconName] : null
 
   return (
-    <div ref={setNodeRef} style={style} className="mb-3 touch-manipulation">
+    <div ref={setNodeRef} style={style} className="mb-3 touch-none select-none">
       <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
         <CardContent className="p-0">
           <div className="p-3 flex flex-row-reverse justify-between items-center">
@@ -53,9 +53,15 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
               <Button
                 variant="ghost"
                 size="sm"
-                className="cursor-grab active:cursor-grabbing p-1 h-auto touch-manipulation"
+                className="cursor-grab active:cursor-grabbing p-1 h-auto touch-none select-none"
                 {...attributes}
                 {...listeners}
+                // Add this to prevent default touch behavior on Android
+                onTouchStart={(e) => {
+                  // Don't prevent default here to allow the touch to be captured
+                  // but stop propagation to prevent parent elements from handling it
+                  e.stopPropagation()
+                }}
                 disabled={sortDisabled}
               >
                 <GripVertical className="w-5 h-5 text-slate-400" />

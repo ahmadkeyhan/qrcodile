@@ -55,14 +55,16 @@ export default function CategoryManager() {
     // PointerSensor works for both mouse and touch on modern browsers
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8, // 8px movement required before drag starts
+        // distance: 8, // 8px movement required before drag starts
+        delay: 100, // Shorter delay for better responsiveness
+        tolerance: 10, // Higher tolerance for Android touch jitter
       },
     }),
     // Add TouchSensor as a fallback for older mobile browsers
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250, // Small delay to distinguish between tap and drag
-        tolerance: 5, // Allow small movements without canceling tap
+        delay: 0, // No delay for Android
+        tolerance: 15, // Higher tolerance for Android touch events
       },
     }),
     // Keep keyboard support for accessibility
