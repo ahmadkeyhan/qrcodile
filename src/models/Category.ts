@@ -6,7 +6,6 @@ export interface ICategory {
   _id?: mongoose.Types.ObjectId | string
   name: string
   description?: string
-  iconName?: string
   order?: number
   createdAt?: Date
   updatedAt?: Date
@@ -16,7 +15,6 @@ const categorySchema = new Schema<ICategory>(
   {
     name: { type: String, required: true },
     description: { type: String },
-    iconName: {type: String},
     order: { type: Number, default: 0 },
   },
   {
