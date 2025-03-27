@@ -32,7 +32,7 @@ export default function MenuSettingsManager() {
       });
     } catch (error: any) {
       toast({
-        title: "Error loading settings",
+        title: "خطا در بارگزاری تنظیمات منو!",
         description: error.message,
         variant: "destructive",
       });
@@ -46,12 +46,12 @@ export default function MenuSettingsManager() {
     try {
       await updateMenuSettings(settings);
       toast({
-        title: "Settings updated",
-        description: "Menu title and description have been updated.",
+        title: "تنظیمات منو به‌روزرسانی شد.",
+        description: "",
       });
     } catch (error: any) {
       toast({
-        title: "Error updating settings",
+        title: "خطا در به‌روزرسانی تنظیمات منو!",
         description: error.message,
         variant: "destructive",
       });

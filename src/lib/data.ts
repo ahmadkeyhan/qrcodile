@@ -359,7 +359,7 @@ export async function getMenuSettings() {
 
     return JSON.parse(JSON.stringify(settings));
   } catch (error) {
-    console.error("Error fetching menu settings:", error);
+    console.error("خطا:", error);
     // Return default settings if there's an error
     return {
       title: "منوی کافه",
@@ -391,7 +391,7 @@ export async function updateMenuSettings(settingsData: Partial<IMenuSettings>) {
 
     return JSON.parse(JSON.stringify(settings));
   } catch (error) {
-    console.error("Error updating menu settings:", error);
+    console.error("خطا:", error);
     throw new Error("Failed to update menu settings");
   }
 }
