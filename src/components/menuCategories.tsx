@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
-import { getCategories } from "@/lib/data";
-import { getCategoryItems } from "@/lib/data";
-import { Badge } from "./ui/badge";
+import { motion, AnimatePresence } from "framer-motion";
+import { getCategories, getCategoryItems } from "@/lib/data";
 import MenuItemCard from "./menuItemCard";
 import MenuItemModal from "./menuItemModal";
 import * as LucideIcons from "lucide-react";
-import * as LabIcons from "@lucide/lab"
+import * as LabIcons from "@lucide/lab";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface category {
   id: string;
@@ -27,98 +26,59 @@ interface item {
   order: number;
 }
 
-// Animation variants for the container
-const containerVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    x: -100,
-    transitionEnd: { position: "absolute" } as any,
-    width: "100%",
-  },
-  visible: {
-    opacity: 1,
-    x: 0,
-    position: "relative" as any,
-    width: "100%",
-    transition: {
-      when: "beforeChildren",
-      staggerChildren: 0.1,
-      duration: 0.3,
-    },
-  },
-  exit: {
-    opacity: 0,
-    x: 100,
-    position: "absolute" as any,
-    width: "100%",
-    transition: {
-      when: "afterChildren",
-      staggerChildren: 0.1,
-      staggerDirection: -1,
-      duration: 0.2,
-    },
-  },
-};
+interface categoryItems {
+  [key : string] : item[]
+}
 
-// Animation variants for individual items
-const itemVariants: Variants = {
-  hidden: { opacity: 0, x: -40 },
+
+// Animation variants for menu items
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
-    x: 0,
+    y: 0,
     transition: {
       duration: 0.3,
     },
   },
-  exit: {
-    opacity: 0,
-    x: 40,
-    transition: {
-      duration: 0.2,
-    },
-  },
-};
+}
 
 export default function MenuCategories() {
   const [categories, setCategories] = useState<category[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>();
-  const [items, setItems] = useState<item[]>([]);
+  const [categoryItems, setCategoryItems] = useState<categoryItems>({})
   const [selectedItem, setSelectedItem] = useState<item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadingCategory, setLoadingCategory] = useState<string | null>(null)
 
   useEffect(() => {
     const loadCategories = async () => {
       const data = await getCategories();
       setCategories(data);
-      if (data.length > 0) {
-        setActiveCategory(data[0].id);
-      }
     };
 
     loadCategories();
   }, []);
 
-  useEffect(() => {
-    const loadItems = async () => {
-      if (activeCategory) {
-        setItems([]); // Clear items immediately to show loading state
-        const data = await getCategoryItems(activeCategory);
-        setItems(data);
-        // Add category name to each item
-        const currentCategory = categories.find(
-          (cat) => cat.id === activeCategory
-        );
-        const itemsWithCategory = data.map((item: item) => ({
-          ...item,
-          categoryName: currentCategory ? currentCategory.name : "",
-        }));
+  const handleAccordionValueChange = async (value: string[]) => {
+    // Load items for the selected category if not already loaded
+    if (value.length > 0 && !categoryItems[value[0]]) {
+      setLoadingCategory(value[0])
+      const items = await getCategoryItems(value[0])
 
-        setItems(itemsWithCategory);
-      }
-    };
+      // Add category name to each item
+      const currentCategory = categories.find((cat) => cat.id === value[0])
+      const itemsWithCategory = items.map((item: item) => ({
+        ...item,
+        categoryName: currentCategory ? currentCategory.name : "",
+      }))
 
-    loadItems();
-  }, [activeCategory, categories]);
+      setCategoryItems((prev) => ({
+        ...prev,
+        [value[0]]: itemsWithCategory,
+      }))
+      setLoadingCategory(null)
+    }
+  }
 
   const handleItemClick = (item: item) => {
     setSelectedItem(item);
@@ -133,56 +93,71 @@ export default function MenuCategories() {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2 overflow-x-auto pb-2 snap-x scrollbar-hide">
+      <Accordion type="multiple" className="w-full" onValueChange={handleAccordionValueChange}>
         {categories.map((category) => {
           // Dynamically get the icon component if iconName exists
-          const IconComponent = category.iconName && category.iconName.toLowerCase()[0] !== category.iconName[0] ? (LucideIcons as any)[category.iconName] : null
+          const IconComponent = category.iconName ? (LucideIcons as any)[category.iconName] : null
           const LabIconComponent = category.iconName && category.iconName.toLowerCase()[0] === category.iconName[0] ? (LabIcons as any)[category.iconName] : null
+          const items = categoryItems[category.id] || []
+          const isLoading = loadingCategory === category.id
 
           return (
-            <Badge
+            <AccordionItem
               key={category.id}
-              variant={activeCategory === category.id ? "default" : "outline"}
-              className={`px-4 py-2 text-sm rounded-full cursor-pointer transition-all duration-300 snap-start ${
-                activeCategory === category.id
-                  ? "bg-amber-500 hover:bg-amber-600"
-                  : "hover:bg-amber-100 border-amber-200"
-              }`}
-              onClick={() => setActiveCategory(category.id)}
+              value={category.id}
+              className="border border-amber-100 rounded-lg mb-4 overflow-hidden"
             >
-              <div className="flex items-center gap-1.5">
-                {IconComponent && <IconComponent className="w-4 h-4" />}
-                {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-4 h-4" />}
-                {category.name}
-              </div>
-            </Badge>
+              <AccordionTrigger className="px-4 py-3 bg-amber-50 hover:bg-amber-100 hover:no-underline">
+                <div className="flex items-center gap-2 text-amber-900">
+                  {IconComponent && <IconComponent className="w-5 h-5 text-amber-600" />}
+                  {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-4 h-4" />}
+                  <span className="font-medium">{category.name}</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-4 bg-white">
+                {isLoading ? (
+                  <div className="py-8 flex justify-center">
+                    <div className="animate-pulse flex space-x-2">
+                      <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
+                      <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
+                      <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
+                    </div>
+                  </div>
+                ) : items.length === 0 ? (
+                  <div className="py-8 text-center text-amber-700">
+                    <p>No items available in this category</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                    <AnimatePresence>
+                      {items.map((item, index) => (
+                        <motion.div
+                          key={item.id}
+                          variants={itemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="hidden"
+                          transition={{ delay: index * 0.05 }}
+                        >
+                          <MenuItemCard item={item} onClick={handleItemClick} />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                )}
+              </AccordionContent>
+            </AccordionItem>
           )
-      })}
-      </div>
+        })}
+      </Accordion>
 
-      <div className="relative min-h-[200px] overflow-hidden">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={activeCategory}
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-          >
-            {items.map((item, index) => (
-              <motion.div key={item.id} variants={itemVariants} custom={index}>
-                <MenuItemCard item={item} onClick={handleItemClick} />
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-      <MenuItemModal
-        item={selectedItem}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      {categories.length === 0 && (
+        <div className="text-center py-12 text-amber-700">
+          <p>Loading menu categories...</p>
+        </div>
+      )}
+
+      <MenuItemModal item={selectedItem} isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }
