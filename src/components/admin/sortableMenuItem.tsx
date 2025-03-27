@@ -6,7 +6,6 @@ import Image from "next/image"
 import { GripVertical } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { formatCurrency } from "@/lib/utils"
 
 interface item {
     id: string,
@@ -86,7 +85,7 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
             <div className="flex-1">
               <div className="flex flex-row-reverse justify-between items-start">
                 <h3 className="font-medium">{item.name}</h3>
-                <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
+                <span className="font-semibold text-amber-700">{item.price}</span>
               </div>
               <p className="text-sm text-slate-500 line-clamp-1">{item.description}</p>
             </div>
