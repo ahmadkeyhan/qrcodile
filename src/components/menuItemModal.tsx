@@ -5,7 +5,7 @@ import Image from "next/image"
 import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { formatCurrency } from "@/lib/utils"
+import { IPriceListItem } from "@/models/MenuItem"
 
 interface MenuItemModalProps {
   item: any
@@ -15,6 +15,9 @@ interface MenuItemModalProps {
 
 export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalProps) {
   if (!item) return null
+
+  // Determine if the item has a price list or a single price
+  const hasPriceList = item.priceList && item.priceList.length > 0
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -55,14 +58,16 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                     <DialogTitle>
                         {item.name}
                     </DialogTitle>
-                    <motion.span
-                      className="text-lg font-semibold text-amber-700"
-                      initial={{ scale: 0.9 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      {formatCurrency(item.price)}
-                    </motion.span>
+                    {!hasPriceList && (
+                      <motion.span
+                        className="text-lg font-semibold text-amber-700"
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        {item.price}
+                      </motion.span>
+                    )}
                   </div>
 
                   <motion.p
@@ -74,6 +79,29 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                     {item.description}
                   </motion.p>
                 </div>
+
+                {/* Price List Section */}
+                {hasPriceList && (
+                  <motion.div
+                    className="space-y-2"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <h3 className="text-sm font-medium text-amber-800">Options & Pricing</h3>
+                    <div className="space-y-2">
+                      {item.priceList.map((priceItem: IPriceListItem, index: number) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center py-1 border-b border-amber-100 last:border-0"
+                        >
+                          <span className="text-amber-900">{priceItem.subItem}</span>
+                          <span className="font-medium text-amber-700">{priceItem.price}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
 
                 {item.ingredients && (
                   <motion.div
