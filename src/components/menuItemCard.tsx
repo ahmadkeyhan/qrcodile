@@ -3,7 +3,6 @@
 import { useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { formatCurrency } from "@/lib/utils"
 
 interface item {
   id: string,
@@ -46,9 +45,9 @@ export default function MenuItemCard({ item, onClick } : {item:item, onClick: (i
       <div className="space-y-1 flex-1">
         <div className="flex justify-between items-start">
           <h3 className="font-medium text-amber-900">{item.name}</h3>
-          <motion.span className="font-semibold text-amber-700" whileHover={{ scale: 1.1 }}>
-            {formatCurrency(item.price)}
-          </motion.span>
+          <p className="font-semibold text-amber-700">
+            {item.price}
+          </p>
         </div>
         <p className="text-sm text-amber-700 line-clamp-2">{item.description}</p>
         {item.ingredients && <p className="text-xs text-amber-500">{item.ingredients}</p>}
