@@ -12,7 +12,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
-      <div className="container px-4 py-6 mx-auto max-w-5xl">
+      <div className="container px-4 py-6 mx-auto max-w-3xl">
         <header className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
             <Coffee className="w-8 h-8 text-amber-600" />
@@ -30,12 +30,14 @@ export default async function Home() {
           </Link>
         </header>
         <section className="space-y-6">
-          <h1 className="text-3xl font-bold text-center text-amber-900">
-            {menuSettings.title}
-          </h1>
-          <p className="text-center text-amber-700 max-w-md mx-auto">
-            {menuSettings.description}
-          </p>
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-amber-900 mb-2">
+              {menuSettings.title}
+            </h1>
+            <p className="text-amber-700 max-w-md mx-auto">
+              {menuSettings.description}
+            </p>
+          </div>
           <Suspense fallback={<MenuSkeleton />}>
             <MenuCategories />
           </Suspense>
