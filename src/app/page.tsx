@@ -1,3 +1,4 @@
+
 import { Suspense } from "react";
 import Link from "next/link";
 import { Coffee, UserCogIcon } from "lucide-react";
@@ -5,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import MenuCategories from "@/components/menuCategories";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getMenuSettings } from "@/lib/data";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 export default async function Home() {
   // Fetch menu settings
@@ -47,36 +50,45 @@ export default async function Home() {
   );
 }
 
+// Loading spinner animation variants
+const spinnerVariants = {
+  animate: {
+    rotate: 360,
+    transition: {
+      repeat: Number.POSITIVE_INFINITY,
+      duration: 1,
+      ease: "linear",
+    },
+  },
+}
+
 function MenuSkeleton() {
   return (
-    <div className="space-y-8">
-      <div className="flex gap-2 overflow-x-auto pb-2 snap-x">
-        {Array(4)
-          .fill(0)
-          .map((_, i) => (
-            <Skeleton
-              key={i}
-              className="h-10 w-24 rounded-full flex-shrink-0"
-            />
-          ))}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {Array(6)
-          .fill(0)
-          .map((_, i) => (
-            <div
-              key={i}
-              className="flex gap-4 p-4 rounded-lg border border-amber-100"
-            >
-              <Skeleton className="h-20 w-20 rounded-md flex-shrink-0" />
-              <div className="space-y-2 flex-1">
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-5 w-16" />
+    <div className="space-y-4">
+      {Array(3)
+        .fill(0)
+        .map((_, i) => (
+          <div key={i} className="border border-amber-100 rounded-lg overflow-hidden">
+            <div className="bg-amber-50 p-4">
+              <Skeleton className="h-6 w-40" />
+            </div>
+            <div className="p-4">
+              <div className="py-8 flex justify-center items-center">
+                <div className="flex space-x-3">
+
+                    <motion.div
+                      variants={spinnerVariants}
+                      initial="initial"
+                      animate="animate"
+                      className="w-3 h-3 rounded-full"
+                    >
+                      <Loader2 />
+                    </motion.div>
+                </div>
               </div>
             </div>
-          ))}
-      </div>
+          </div>
+        ))}
     </div>
-  );
+  )
 }
