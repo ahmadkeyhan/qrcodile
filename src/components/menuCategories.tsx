@@ -43,12 +43,25 @@ const itemVariants = {
   },
 }
 
+// Loading spinner animation variants
+const spinnerVariants = {
+  animate: {
+    rotate: 360,
+    transition: {
+      repeat: Number.POSITIVE_INFINITY,
+      duration: 1,
+      ease: "linear",
+    },
+  },
+}
+
 export default function MenuCategories() {
   const [categories, setCategories] = useState<category[]>([]);
   const [categoryItems, setCategoryItems] = useState<categoryItems>({})
   const [selectedItem, setSelectedItem] = useState<item | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loadingCategory, setLoadingCategory] = useState<string | null>(null)
+  const [loadingCategories, setLoadingCategories] = useState(new Set())
+  const [openCategories, setOpenCategories] = useState<string[]>([])
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -59,25 +72,61 @@ export default function MenuCategories() {
     loadCategories();
   }, []);
 
-  const handleAccordionValueChange = async (value: string[]) => {
-    // Load items for the selected category if not already loaded
-    if (value.length > 0 && !categoryItems[value[0]]) {
-      setLoadingCategory(value[0])
-      const items = await getCategoryItems(value[0])
+  useEffect(() => {
+    const loadItemsForCategories = async () => {
+      // Find categories that are open but don't have items loaded yet
+      const categoriesToLoad = openCategories.filter(
+        (categoryId) => !categoryItems[categoryId] && !loadingCategories.has(categoryId),
+      )
 
-      // Add category name to each item
-      const currentCategory = categories.find((cat) => cat.id === value[0])
-      const itemsWithCategory = items.map((item: item) => ({
-        ...item,
-        categoryName: currentCategory ? currentCategory.name : "",
-      }))
+      if (categoriesToLoad.length === 0) return
 
-      setCategoryItems((prev) => ({
-        ...prev,
-        [value[0]]: itemsWithCategory,
-      }))
-      setLoadingCategory(null)
+      // Update loading state for these categories
+      const newLoadingCategories = new Set(loadingCategories)
+      categoriesToLoad.forEach((categoryId) => newLoadingCategories.add(categoryId))
+      setLoadingCategories(newLoadingCategories)
+
+      // Load items for each category in parallel
+      const loadPromises = categoriesToLoad.map(async (categoryId) => {
+        try {
+          const items = await getCategoryItems(categoryId)
+
+          // Add category name to each item
+          const currentCategory = categories.find((cat: category) => cat.id === categoryId)
+          const itemsWithCategory = items.map((item: item) => ({
+            ...item,
+            categoryName: currentCategory ? currentCategory.name : "",
+          }))
+
+          return { categoryId, items: itemsWithCategory }
+        } catch (error) {
+          console.error(`Error loading items for category ${categoryId}:`, error)
+          return { categoryId, items: [] }
+        }
+      })
+
+      // Wait for all loading to complete
+      const results = await Promise.all(loadPromises)
+
+      // Update state with all loaded items
+      const newCategoryItems = { ...categoryItems }
+      results.forEach(({ categoryId, items }) => {
+        newCategoryItems[categoryId] = items
+      })
+
+      setCategoryItems(newCategoryItems)
+
+      // Update loading state
+      const finalLoadingCategories = new Set(loadingCategories)
+      categoriesToLoad.forEach((categoryId) => finalLoadingCategories.delete(categoryId))
+      setLoadingCategories(finalLoadingCategories)
     }
+
+    loadItemsForCategories()
+  }, [openCategories, categoryItems, loadingCategories, categories])
+
+  const handleAccordionValueChange = (value : string[]) => {
+    setOpenCategories(value)
   }
 
   const handleItemClick = (item: item) => {
@@ -99,7 +148,7 @@ export default function MenuCategories() {
           const IconComponent = category.iconName ? (LucideIcons as any)[category.iconName] : null
           const LabIconComponent = category.iconName && category.iconName.toLowerCase()[0] === category.iconName[0] ? (LabIcons as any)[category.iconName] : null
           const items = categoryItems[category.id] || []
-          const isLoading = loadingCategory === category.id
+          const isLoading = loadingCategories.has(category.id)
 
           return (
             <AccordionItem
@@ -116,11 +165,16 @@ export default function MenuCategories() {
               </AccordionTrigger>
               <AccordionContent className="px-4 bg-white">
                 {isLoading ? (
-                  <div className="py-8 flex justify-center">
-                    <div className="animate-pulse flex space-x-2">
-                      <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                      <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
-                      <div className="h-2 w-2 bg-amber-500 rounded-full"></div>
+                  <div className="py-12 flex justify-center items-center">
+                  <div className="flex space-x-3">
+                      <motion.div
+                        variants={spinnerVariants}
+                        initial="initial"
+                        animate="animate"
+                        className="w-5 h-5 text-amber-500 flex justify-center items-center"
+                      >
+                        <LucideIcons.Loader2 />
+                      </motion.div>
                     </div>
                   </div>
                 ) : items.length === 0 ? (
@@ -152,8 +206,17 @@ export default function MenuCategories() {
       </Accordion>
 
       {categories.length === 0 && (
-        <div className="text-center py-12 text-amber-700">
-          <p>Loading menu categories...</p>
+        <div className="py-12 flex justify-center items-center">
+          <div className="flex space-x-3">
+            <motion.div
+              variants={spinnerVariants}
+              initial="initial"
+              animate="animate"
+              className="w-5 h-5 text-amber-500 flex justify-center items-center"
+            >
+              <LucideIcons.Loader2 />
+            </motion.div>
+          </div>
         </div>
       )}
 
