@@ -6,6 +6,7 @@ import Image from "next/image"
 import { GripVertical } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import * as LucideIcons from "lucide-react"
 
 interface priceListItem {
   subItem: string;
@@ -16,6 +17,7 @@ interface item {
   id: string;
   name: string;
   description: string;
+  iconName: string;
   priceList: priceListItem[];
   categoryId: string;
   ingredients: string;
@@ -73,6 +75,8 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
     }
   };
 
+  const IconComponent = item.iconName ? (LucideIcons as any)[item.iconName] : null
+
   return (
     <div ref={setNodeRef} style={style} className="mb-3 touch-manipulation">
       <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
@@ -106,9 +110,9 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
 
 
             <div className="flex-1">
-              <div className="flex flex-row-reverse justify-between items-start">
+              <div className="flex flex-row-reverse gap-1 items-center">
+                 {IconComponent && <IconComponent className="w-4 h-4" />}
                 <h3 className="font-medium">{item.name}</h3>
-                <span className="font-semibold text-amber-700">{getPriceRange()}</span>
               </div>
               <p className="text-sm text-slate-500 line-clamp-1">{item.description}</p>
             {/* Show price list items if available */}

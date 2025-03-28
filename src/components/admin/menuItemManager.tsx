@@ -39,6 +39,8 @@ import Image from "next/image"
 import SortableMenuItem from "./sortableMenuItem"
 import { deleteImage } from "@/lib/imageUtils"
 import AvailabilityToggle from "./availabilityToggle"
+import IconSelector from "./iconSelector"
+import * as LucideIcons from "lucide-react"
 
 interface priceListItem {
   subItem: string;
@@ -49,6 +51,7 @@ interface item {
   id: string;
   name: string;
   description: string;
+  iconName: string;
   priceList: priceListItem[];
   categoryId: string;
   ingredients: string;
@@ -71,6 +74,7 @@ interface groupedItems {
 type FormMenuItem = {
   name: string
   description: string
+  iconName: string
   priceList: priceListItem[]
   categoryId: string
   ingredients: string
@@ -85,6 +89,7 @@ export default function MenuItemManager({isAdmin = true}) {
   const [newItem, setNewItem] = useState<FormMenuItem>({
     name: "",
     description: "",
+    iconName: "",
     priceList: [{ subItem: "", price: 0 }],
     categoryId: "",
     ingredients: "",
@@ -95,6 +100,7 @@ export default function MenuItemManager({isAdmin = true}) {
   const [editForm, setEditForm] = useState<FormMenuItem>({
     name: "",
     description: "",
+    iconName: "",
     priceList: [{ subItem: "", price: 0 }],
     categoryId: "",
     ingredients: "",
@@ -270,6 +276,7 @@ export default function MenuItemManager({isAdmin = true}) {
       setNewItem({
         name: "",
         description: "",
+        iconName: "",
         priceList: [{ subItem: "", price: 0 }],
         categoryId: "",
         ingredients: "",
@@ -295,6 +302,7 @@ export default function MenuItemManager({isAdmin = true}) {
     setEditForm({
       name: item.name,
       description: item.description,
+      iconName: item.iconName,
       priceList: item.priceList && item.priceList.length > 0 ? item.priceList : [{ subItem: "", price: 0 }],
       categoryId: item.categoryId,
       ingredients: item.ingredients || "",
@@ -485,6 +493,12 @@ export default function MenuItemManager({isAdmin = true}) {
               />
             </div>
             <div className="sm:w-[calc(50%-0.5rem)]">
+              <IconSelector
+                value={newItem.iconName}
+                onChange={(iconName) => setNewItem({ ...newItem, iconName })}
+              />
+            </div>
+            <div className="sm:w-[calc(50%-0.5rem)]">
                 <div className="flex flex-row-reverse justify-between items-center mb-4">
                   <h4 className="text-sm font-medium">لیست زیرآیتم‌ها</h4>
                   <Button type="button" variant="outline" size="sm" onClick={addPriceListItem} className="h-8">
@@ -637,8 +651,10 @@ export default function MenuItemManager({isAdmin = true}) {
                           </DndContext>
                         ) : (
                           <div className="space-y-3">
-                            {categoryItems.map((item) =>
-                              editingId === item.id && isAdmin ? (
+                            {categoryItems.map((item) => {
+                              const IconComponent = item.iconName ? (LucideIcons as any)[item.iconName] : null
+                              
+                              if (editingId === item.id && isAdmin) return (
                                 <Card key={item.id} className="overflow-hidden">
                                   <CardContent className="p-0">
                                     <form onSubmit={handleUpdateSubmit} className="p-4 space-y-4">
@@ -657,6 +673,12 @@ export default function MenuItemManager({isAdmin = true}) {
                                             value={editForm.description}
                                             onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
                                             required
+                                          />
+                                        </div>
+                                        <div className="sm:col-span-2">
+                                          <IconSelector
+                                            value={editForm.iconName}
+                                            onChange={(iconName) => setEditForm({ ...editForm, iconName })}
                                           />
                                         </div>
                                         <div className="sm:col-span-2 space-y-3">
@@ -769,7 +791,7 @@ export default function MenuItemManager({isAdmin = true}) {
                                     </form>
                                   </CardContent>
                                 </Card>
-                              ) : (
+                              ); else return (
                                 <Card key={item.id} className="overflow-hidden">
                                   <CardContent className="p-0">
                                     <div className="p-4 flex flex-row-reverse gap-4 items-center">
@@ -791,15 +813,9 @@ export default function MenuItemManager({isAdmin = true}) {
                                             />
                                       </div>
                                       <div className="flex flex-col w-full gap-2">
-                                        <div className="flex flex-row-reverse justify-between items-start">
+                                        <div className="flex flex-row-reverse gap-1 items-center">
+                                          {IconComponent && <IconComponent className="w-4 h-4" />}
                                           <h3 className="font-medium">{item.name}</h3>
-                                          {item.priceList.length > 0 ? (
-                                            <div className="text-right">
-                                              <span className="font-semibold text-amber-700">
-                                                {getPriceRange(item)}
-                                              </span>
-                                            </div>
-                                          ) : null}
                                         </div>
                                         <p className="text-sm text-slate-500 text-right">{item.description}</p>
                                         {item.ingredients && (
@@ -842,7 +858,7 @@ export default function MenuItemManager({isAdmin = true}) {
                                     </div>
                                   </CardContent>
                                 </Card>
-                              ),
+                              )}
                             )}
                           </div>
                         )}
