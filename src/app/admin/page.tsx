@@ -10,6 +10,7 @@ import MenuItemManager from "@/components/admin/menuItemManager";
 import PasswordManager from "@/components/admin/passwordManager";
 import UserManager from "@/components/admin/userManager";
 import MenuSettingsManager from "@/components/admin/menuSettingsManager";
+import ProductManager from "@/components/admin/product/productManager";
 import QRCodeGenerator from "@/components/admin/qrCodeGenerator";
 
 export default function AdminPage() {
@@ -43,6 +44,7 @@ export default function AdminPage() {
             )}
             <TabsTrigger value="items">آیتم‌ها</TabsTrigger>
             {isAdmin && <TabsTrigger value="menu">منو</TabsTrigger>}
+            {isAdmin && <TabsTrigger value="products">محصولات</TabsTrigger>}
             <TabsTrigger value="users">اکانت‌ها</TabsTrigger>
             {isAdmin && <TabsTrigger value="qr">کیوآر</TabsTrigger>}
           </TabsList>
@@ -74,6 +76,17 @@ export default function AdminPage() {
               </h1>
               <Suspense fallback={<SettingsSkeleton />}>
                 <MenuSettingsManager />
+              </Suspense>
+            </TabsContent>
+          )}
+
+          {isAdmin && (
+            <TabsContent value="products" className="space-y-6">
+              <h1 className="text-xl font-semibold text-center text-amber-900">
+                مدیریت محصولات
+              </h1>
+              <Suspense fallback={<ProductSkeleton />}>
+                <ProductManager />
               </Suspense>
             </TabsContent>
           )}
@@ -149,6 +162,15 @@ function CategoriesSkeleton() {
 }
 
 function SettingsSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full max-w-md" />
+      <Skeleton className="h-40 w-full rounded-lg" />
+    </div>
+  );
+}
+
+function ProductSkeleton() {
   return (
     <div className="space-y-4">
       <Skeleton className="h-10 w-full max-w-md" />
