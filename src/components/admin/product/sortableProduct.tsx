@@ -16,7 +16,7 @@ interface SortableProductProps {
   sortDisabled: boolean
 }
 
-export default function SortableCategoryItem({ product, onEdit, onDelete, sortDisabled }: SortableProductProps) {
+export default function SortableProduct({ product, onEdit, onDelete, sortDisabled }: SortableProductProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: product.id,
     // Add these properties to improve touch handling
