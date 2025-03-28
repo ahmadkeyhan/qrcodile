@@ -6,20 +6,25 @@ import { getCategories, getCategoryItems } from "@/lib/data";
 import MenuItemCard from "./menuItemCard";
 import MenuItemModal from "./menuItemModal";
 import * as LucideIcons from "lucide-react";
-import * as LabIcons from "@lucide/lab";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface category {
   id: string;
   name: string;
   description: string;
-  iconName: string;
 }
+
+interface priceListItem {
+  subItem: string;
+  price: number;
+}
+
 interface item {
   id: string;
   name: string;
   description: string;
-  price: number;
+  iconName: string;
+  priceList: priceListItem[];
   categoryId: string;
   ingredients: string;
   image: string;
@@ -145,8 +150,8 @@ export default function MenuCategories() {
       <Accordion type="multiple" className="w-full" onValueChange={handleAccordionValueChange}>
         {categories.map((category) => {
           // Dynamically get the icon component if iconName exists
-          const IconComponent = category.iconName ? (LucideIcons as any)[category.iconName] : null
-          const LabIconComponent = category.iconName && category.iconName.toLowerCase()[0] === category.iconName[0] ? (LabIcons as any)[category.iconName] : null
+          // const IconComponent = category.iconName ? (LucideIcons as any)[category.iconName] : null
+          
           const items = categoryItems[category.id] || []
           const isLoading = loadingCategories.has(category.id)
 
@@ -158,8 +163,7 @@ export default function MenuCategories() {
             >
               <AccordionTrigger className="px-4 py-3 bg-amber-50 hover:bg-amber-100 hover:no-underline">
                 <div className="flex items-center gap-2 text-amber-900">
-                  {IconComponent && <IconComponent className="w-5 h-5 text-amber-600" />}
-                  {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-4 h-4" />}
+                  {/* {IconComponent && <IconComponent className="w-5 h-5 text-amber-600" />} */}
                   <span className="font-medium">{category.name}</span>
                 </div>
               </AccordionTrigger>
