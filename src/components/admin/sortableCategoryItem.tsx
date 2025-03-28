@@ -5,14 +5,11 @@ import { CSS } from "@dnd-kit/utilities"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Edit, Trash2, GripVertical } from "lucide-react"
-import * as LucideIcons from "lucide-react"
-import * as LabIcons from "@lucide/lab"
 
 interface category {
     id: string, 
     name: string, 
     description: string,
-    iconName: string,
     order: number
 }
 
@@ -40,10 +37,6 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
     zIndex: isDragging ? 1 : 0,
   }
 
-  // Dynamically get the icon component if iconName exists
-  const IconComponent = category.iconName && category.iconName.toLowerCase()[0] !== category.iconName[0] ? (LucideIcons as any)[category.iconName] : null
-  const LabIconComponent = category.iconName && category.iconName.toLowerCase()[0] === category.iconName[0] ? (LabIcons as any)[category.iconName] : null
-
   return (
     <div ref={setNodeRef} style={style} className="mb-3 touch-manipulation">
       <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
@@ -69,8 +62,7 @@ export default function SortableCategoryItem({ category, onEdit, onDelete, sortD
               </Button>
               <div className="flex flex-col gap-1">
                 <div className="flex flex-row-reverse gap-2">
-                  {IconComponent && <IconComponent className="w-5 h-5" />}
-                  {LabIconComponent && <LucideIcons.Icon iconNode={LabIconComponent} className="w-5 h-5" />}
+                  {/* {IconComponent && <IconComponent className="w-5 h-5" />} */}
                   <h3 className="font-medium">{category.name}</h3>
                 </div>
                 {category.description && <p className="text-sm text-slate-500">{category.description}</p>}

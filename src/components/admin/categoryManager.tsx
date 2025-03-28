@@ -32,12 +32,10 @@ import {
 } from "@/lib/data"
 import { useToast } from "@/components/ui/toastContext"
 import SortableCategoryItem from "./sortableCategoryItem"
-import IconSelector from "./iconSelector"
 
 interface category {
     id: string, 
     name: string,
-    iconName: string, 
     description: string,
     order: number
 }
@@ -45,9 +43,9 @@ interface category {
 
 export default function CategoryManager() {
   const [categories, setCategories] = useState<category[]>([])
-  const [newCategory, setNewCategory] = useState({ name: "", description: "", iconName: "" })
+  const [newCategory, setNewCategory] = useState({ name: "", description: ""})
   const [editingId, setEditingId] = useState<string>("")
-  const [editForm, setEditForm] = useState({ name: "", description: "", iconName: "" })
+  const [editForm, setEditForm] = useState({ name: "", description: ""})
   const [isReordering, setIsReordering] = useState(false)
 
   // Set up sensors for drag and drop with improved mobile support
@@ -90,7 +88,7 @@ export default function CategoryManager() {
     try {
        // Set order to be the last item
       await createCategory({...newCategory,order: categories.length})
-      setNewCategory({ name: "", description: "", iconName: "" })
+      setNewCategory({ name: "", description: ""})
       loadCategories()
       toast({
         title: "دسته‌بندی‌ ایجاد شد!",
@@ -107,7 +105,7 @@ export default function CategoryManager() {
 
   const handleEditClick = (category: category) => {
     setEditingId(category.id)
-    setEditForm({ name: category.name, description: category.description, iconName: category.iconName })
+    setEditForm({ name: category.name, description: category.description})
   }
 
   const handleUpdateSubmit = async (e: FormEvent) => {
@@ -202,12 +200,6 @@ export default function CategoryManager() {
               onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
               required
             />
-            <div className="sm:col-span-2">
-              <IconSelector
-                value={newCategory.iconName}
-                onChange={(iconName) => setNewCategory({ ...newCategory, iconName })}
-              />
-            </div>
           </div>
           <div className="w-full">
             <Textarea
@@ -239,12 +231,6 @@ export default function CategoryManager() {
                             onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                             required
                           />
-                          <div className="sm:col-span-2">
-                            <IconSelector
-                              value={editForm.iconName}
-                              onChange={(iconName) => setEditForm({ ...editForm, iconName })}
-                            />
-                          </div>
                         </div>
                         <div>
                           <Textarea
