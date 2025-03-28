@@ -7,9 +7,27 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { IPriceListItem } from "@/models/MenuItem"
 import { formatCurrency } from "@/lib/utils"
+import * as LucideIcons from "lucide-react"
+
+interface priceListItem {
+  subItem: string;
+  price: number;
+}
+
+interface item {
+  id: string;
+  name: string;
+  description: string;
+  iconName: string;
+  priceList: priceListItem[];
+  categoryName: string;
+  ingredients: string;
+  image: string;
+  order: number;
+}
 
 interface MenuItemModalProps {
-  item: any
+  item: item
   isOpen: boolean
   onClose: () => void
 }
@@ -17,6 +35,7 @@ interface MenuItemModalProps {
 export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalProps) {
   if (!item) return null
 
+  const IconComponent = item.iconName ? (LucideIcons as any)[item.iconName] : null
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -53,8 +72,11 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                 <div className="space-y-1">
                   <div className="flex justify-between items-start">
                     <DialogTitle className="flex w-full justify-between">
-                        <h2>{item.name}</h2>
-                        {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{formatCurrency(item.priceList[0].price)}</p>}
+                      <div className="flex items-center gap-1 text-amber-900">
+                        {IconComponent && <IconComponent className="w-4 h-4" />}
+                        <h2 className="font-bold text-base">{item.name}</h2>
+                      </div>        
+                      {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{formatCurrency(item.priceList[0].price)}</p>}
                     </DialogTitle>
                   </div>
 
