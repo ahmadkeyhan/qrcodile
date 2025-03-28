@@ -61,7 +61,7 @@ export default function MenuItemCard({
       <div className="space-y-1 flex-1">
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-1 text-amber-900">
-            {IconComponent && <IconComponent className="w-5 h-5" />}
+            {IconComponent && <IconComponent className="w-4 h-4" />}
             <h2 className="font-bold text-base">{item.name}</h2>
           </div>
           {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{formatCurrency(item.priceList[0].price)}</p>}
