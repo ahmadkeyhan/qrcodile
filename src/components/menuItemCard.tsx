@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { formatCurrency } from "@/lib/utils";
+import * as LucideIcons from "lucide-react"
 
 interface priceListItem {
   subItem: string;
@@ -14,6 +15,7 @@ interface item {
   id: string;
   name: string;
   description: string;
+  iconName: string;
   priceList: priceListItem[];
   categoryId: string;
   ingredients: string;
@@ -29,6 +31,8 @@ export default function MenuItemCard({
   onClick: (item: item) => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
+
+  const IconComponent = item.iconName ? (LucideIcons as any)[item.iconName] : null
 
   return (
     <motion.div
@@ -56,7 +60,10 @@ export default function MenuItemCard({
 
       <div className="space-y-1 flex-1">
         <div className="flex justify-between items-start">
-          <h2 className="font-bold text-base text-amber-900">{item.name}</h2>
+          <div className="flex items-center gap-1 text-amber-900">
+            {IconComponent && <IconComponent className="w-5 h-5" />}
+            <h2 className="font-bold text-base">{item.name}</h2>
+          </div>
           {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{formatCurrency(item.priceList[0].price)}</p>}
         </div>
         {/* Show price list items */}
