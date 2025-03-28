@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, FormEvent } from "react"
-import { Plus, Edit, Trash2, Save, X, ChevronDown, ChevronUp, LucideListStart } from "lucide-react"
+import { Plus, Edit, Trash2, Save, X, ChevronDown, ChevronUp, LucideListStart, PlusCircle, MinusCircle } from "lucide-react"
 import {
   DndContext,
   closestCenter,
@@ -32,7 +32,6 @@ import {
   deleteMenuItem,
   reorderMenuItems
 } from "@/lib/data"
-import { formatCurrency } from "@/lib/utils"
 import { useToast } from "@/components/ui/toastContext"
 
 import ImageUploader from "./imageUploader"
@@ -41,16 +40,21 @@ import SortableMenuItem from "./sortableMenuItem"
 import { deleteImage } from "@/lib/imageUtils"
 import AvailabilityToggle from "./availabilityToggle"
 
+interface priceListItem {
+  subItem: string;
+  price: number;
+}
+
 interface item {
-    id: string,
-    name: string,
-    description: string,
-    price: number,
-    categoryId: string,
-    ingredients: string,
-    image: string,
-    order: number,
-    available: boolean
+  id: string;
+  name: string;
+  description: string;
+  priceList: priceListItem[];
+  categoryId: string;
+  ingredients: string;
+  image: string;
+  order: number;
+  available: boolean
 }
 
 interface category {
@@ -64,24 +68,34 @@ interface groupedItems {
   [categoryId: string]: item[]
 }
 
+type FormMenuItem = {
+  name: string
+  description: string
+  priceList: priceListItem[]
+  categoryId: string
+  ingredients: string
+  image: string
+  available: boolean
+}
+
 export default function MenuItemManager({isAdmin = true}) {
   const [items, setItems] = useState<item[]>([])
   const [groupedItems,setGroupedItems] = useState<groupedItems>({})
   const [categories, setCategories] = useState<category[]>([])
-  const [newItem, setNewItem] = useState({
+  const [newItem, setNewItem] = useState<FormMenuItem>({
     name: "",
     description: "",
-    price: "",
+    priceList: [{ subItem: "", price: 0 }],
     categoryId: "",
     ingredients: "",
     image: "",
     available: true
   })
   const [editingId, setEditingId] = useState<string>("")
-  const [editForm, setEditForm] = useState({
+  const [editForm, setEditForm] = useState<FormMenuItem>({
     name: "",
     description: "",
-    price: "",
+    priceList: [{ subItem: "", price: 0 }],
     categoryId: "",
     ingredients: "",
     image: "",
@@ -163,18 +177,100 @@ export default function MenuItemManager({isAdmin = true}) {
     setExpandedCategories(newExpanded)
   }
 
+  // Add a price list item to the new item form
+  const addPriceListItem = () => {
+    setNewItem({
+      ...newItem,
+      priceList: [...newItem.priceList, { subItem: "", price: 0 }],
+    })
+  }
+
+  // Remove a price list item from the new item form
+  const removePriceListItem = (index: number) => {
+    if (newItem.priceList.length <= 1) return
+
+    const updatedPriceList = [...newItem.priceList]
+    updatedPriceList.splice(index, 1)
+
+    setNewItem({
+      ...newItem,
+      priceList: updatedPriceList,
+    })
+  }
+
+  // Update a price list item in the new item form
+  const updatePriceListItem = (index: number, field: "subItem" | "price", value: string | number) => {
+    const updatedPriceList = [...newItem.priceList]
+    updatedPriceList[index] = {
+      ...updatedPriceList[index],
+      [field]: field === "price" ? Number(value) : value,
+    }
+
+    setNewItem({
+      ...newItem,
+      priceList: updatedPriceList,
+    })
+  }
+
+  // Add a price list item to the edit form
+  const addEditPriceListItem = () => {
+    setEditForm({
+      ...editForm,
+      priceList: [...editForm.priceList, { subItem: "", price: 0 }],
+    })
+  }
+
+  // Remove a price list item from the edit form
+  const removeEditPriceListItem = (index: number) => {
+    if (editForm.priceList.length <= 1) return
+
+    const updatedPriceList = [...editForm.priceList]
+    updatedPriceList.splice(index, 1)
+
+    setEditForm({
+      ...editForm,
+      priceList: updatedPriceList,
+    })
+  }
+
+  // Update a price list item in the edit form
+  const updateEditPriceListItem = (index: number, field: "subItem" | "price", value: string | number) => {
+    const updatedPriceList = [...editForm.priceList]
+    updatedPriceList[index] = {
+      ...updatedPriceList[index],
+      [field]: field === "price" ? Number(value) : value,
+    }
+
+    setEditForm({
+      ...editForm,
+      priceList: updatedPriceList,
+    })
+  }
+
   const handleCreateSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
+      // Validate price list if using it
+      const invalidItems = newItem.priceList.filter((item) => !item.subItem || item.price <= 0)
+      if (invalidItems.length > 0) {
+        toast({
+          title: "Invalid price list",
+          description: "All price list items must have a name and a price greater than zero.",
+          variant: "destructive",
+        })
+        return
+      }
+
       const formattedItem = {
         ...newItem,
-        price: Number.parseFloat(newItem.price)
+        // price: Number.parseFloat(newItem.price)
       }
+      
       await createMenuItem(formattedItem)
       setNewItem({
         name: "",
         description: "",
-        price: "",
+        priceList: [{ subItem: "", price: 0 }],
         categoryId: "",
         ingredients: "",
         image: "",
@@ -199,22 +295,32 @@ export default function MenuItemManager({isAdmin = true}) {
     setEditForm({
       name: item.name,
       description: item.description,
-      price: item.price.toString(),
+      priceList: item.priceList && item.priceList.length > 0 ? item.priceList : [{ subItem: "", price: 0 }],
       categoryId: item.categoryId,
       ingredients: item.ingredients || "",
       image: item.image || "",
-      available: true
+      available: item.available
     })
   }
 
   const handleUpdateSubmit = async (e: FormEvent) => {
     e.preventDefault()
     try {
+      const invalidItems = editForm.priceList.filter((item) => !item.subItem || item.price <= 0)
+      if (invalidItems.length > 0) {
+        toast({
+          title: "Invalid price list",
+          description: "All price list items must have a name and a price greater than zero.",
+          variant: "destructive",
+        })
+        return
+      }
+      
       const formattedItem = {
         ...editForm,
         _id: editingId,
-        price: Number.parseFloat(editForm.price),
       }
+
       await updateMenuItem(editingId, formattedItem)
       setEditingId("")
       loadData()
@@ -342,7 +448,7 @@ export default function MenuItemManager({isAdmin = true}) {
                 required
               />
             </div>
-            <div className="sm:w-[calc(50%-0.5rem)]">
+            {/* <div className="sm:w-[calc(50%-0.5rem)]">
               <Input
                 placeholder="قیمت"
                 type="number"
@@ -352,7 +458,7 @@ export default function MenuItemManager({isAdmin = true}) {
                 onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                 required
               />
-            </div>
+            </div> */}
             <div className="sm:w-[calc(50%-0.5rem)]">
               <Textarea
                 placeholder="توضیحات"
@@ -361,6 +467,47 @@ export default function MenuItemManager({isAdmin = true}) {
                 required
               />
             </div>
+            <div className="sm:w-[calc(50%-0.5rem)]">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-sm font-medium">Price List</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addPriceListItem} className="h-8">
+                    <PlusCircle className="h-4 w-4 mr-1" />
+                    Add Variation
+                  </Button>
+                </div>
+
+                {newItem.priceList.map((priceItem, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Input
+                      placeholder="Variation Name (e.g. Small, Medium, Large)"
+                      value={priceItem.subItem}
+                      onChange={(e) => updatePriceListItem(index, "subItem", e.target.value)}
+                      required
+                      className="flex-1"
+                    />
+                    <Input
+                      placeholder="Price"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={priceItem.price || ""}
+                      onChange={(e) => updatePriceListItem(index, "price", e.target.value)}
+                      required
+                      className="w-24"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removePriceListItem(index)}
+                      disabled={newItem.priceList.length <= 1}
+                      className="h-8 w-8 text-red-500"
+                    >
+                      <MinusCircle className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             <div className="sm:w-[calc(50%-0.5rem)]">
               <Input
                 placeholder="مواد تشکیل دهنده (اختیاری)"
@@ -487,17 +634,6 @@ export default function MenuItemManager({isAdmin = true}) {
                                             required
                                           />
                                         </div>
-                                        <div>
-                                          <Input
-                                            placeholder="قیمت"
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            value={editForm.price}
-                                            onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
-                                            required
-                                          />
-                                        </div>
                                         <div className="sm:col-span-2">
                                           <Textarea
                                             placeholder="توضیحات"
@@ -506,6 +642,57 @@ export default function MenuItemManager({isAdmin = true}) {
                                             required
                                           />
                                         </div>
+                                        <div className="sm:col-span-2 space-y-3">
+                                            <div className="flex justify-between items-center">
+                                              <h4 className="text-sm font-medium">Price List</h4>
+                                              <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={addEditPriceListItem}
+                                                className="h-8"
+                                              >
+                                                <PlusCircle className="h-4 w-4 mr-1" />
+                                                Add Variation
+                                              </Button>
+                                            </div>
+
+                                            {editForm.priceList.map((priceItem, index) => (
+                                              <div key={index} className="flex items-center gap-2">
+                                                <Input
+                                                  placeholder="Variation Name (e.g. Small, Medium, Large)"
+                                                  value={priceItem.subItem}
+                                                  onChange={(e) =>
+                                                    updateEditPriceListItem(index, "subItem", e.target.value)
+                                                  }
+                                                  required
+                                                  className="flex-1"
+                                                />
+                                                <Input
+                                                  placeholder="Price"
+                                                  type="number"
+                                                  step="0.01"
+                                                  min="0"
+                                                  value={priceItem.price || ""}
+                                                  onChange={(e) =>
+                                                    updateEditPriceListItem(index, "price", e.target.value)
+                                                  }
+                                                  required
+                                                  className="w-24"
+                                                />
+                                                <Button
+                                                  type="button"
+                                                  variant="ghost"
+                                                  size="icon"
+                                                  onClick={() => removeEditPriceListItem(index)}
+                                                  disabled={editForm.priceList.length <= 1}
+                                                  className="h-8 w-8 text-red-500"
+                                                >
+                                                  <MinusCircle className="h-4 w-4" />
+                                                </Button>
+                                              </div>
+                                            ))}
+                                          </div>
                                         <div>
                                           <Input
                                             placeholder="مواد تشکیل دهنده (اختیاری)"
@@ -589,11 +776,32 @@ export default function MenuItemManager({isAdmin = true}) {
                                       <div className="flex flex-col w-full gap-2">
                                         <div className="flex flex-row-reverse justify-between items-start">
                                           <h3 className="font-medium">{item.name}</h3>
-                                          <span className="font-semibold text-amber-700">{formatCurrency(item.price)}</span>
+                                          {item.priceList.length > 0 ? (
+                                            <div className="text-right">
+                                              <span className="font-semibold text-amber-700">
+                                                {item.priceList[0].price}
+                                                {item.priceList.length > 1 &&
+                                                  " - " +
+                                                    item.priceList[item.priceList.length - 1].price}
+                                              </span>
+                                            </div>
+                                          ) : null}
                                         </div>
                                         <p className="text-sm text-slate-500 text-right">{item.description}</p>
                                         {item.ingredients && (
                                           <span className="text-xs text-slate-400">{item.ingredients}</span>
+                                        )}
+                                        {item.priceList && item.priceList.length > 0 && (
+                                          <div className="mt-1 flex flex-wrap gap-1">
+                                            {item.priceList.map((priceItem, index) => (
+                                              <span
+                                                key={index}
+                                                className="text-xs px-2 py-0.5 bg-amber-50 rounded-full text-amber-700"
+                                              >
+                                                {priceItem.subItem}: {priceItem.price}
+                                              </span>
+                                            ))}
+                                          </div>
                                         )}
                                           <div className="flex flex-row-reverse justify-end gap-2">
                                             {isAdmin && (

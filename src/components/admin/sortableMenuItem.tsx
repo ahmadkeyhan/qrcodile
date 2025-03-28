@@ -16,12 +16,12 @@ interface item {
   id: string;
   name: string;
   description: string;
-  price?: number;
-  priceList?: priceListItem[];
+  priceList: priceListItem[];
   categoryId: string;
   ingredients: string;
   image: string;
   order: number;
+  available: boolean
 }
 
 interface category {
@@ -55,18 +55,15 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
     zIndex: isDragging ? 1 : 0,
   }
 
-  // Determine if the item has a price list or a single price
-  const hasPriceList = item.priceList && item.priceList.length > 0
 
   // Get the price range if there's a price list
   const getPriceRange = () => {
-    if (!hasPriceList) return item.price;
 
-    if (item.priceList && item.priceList.length === 1) {
+    if (item.priceList.length === 1) {
       return item.priceList[0].price;
     }
 
-    if (item.priceList && item.priceList.length > 1) {
+    if (item.priceList.length > 1) {
       const prices = item.priceList.map((p: priceListItem) => p.price);
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
@@ -115,7 +112,7 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
               </div>
               <p className="text-sm text-slate-500 line-clamp-1">{item.description}</p>
             {/* Show price list items if available */}
-              {item.priceList && item.priceList.length > 1 && (
+              {item.priceList.length > 1 && (
                   <div className="mt-1 flex flex-wrap gap-1">
                     {item.priceList.map((priceItem, index) => (
                       <span key={index} className="text-xs px-2 py-0.5 bg-amber-50 rounded-full text-amber-700">
