@@ -180,8 +180,8 @@ export default function ProductManager() {
 
       try {
         // Calculate the new order of products
-        const oldIndex = products.findIndex((item) => item.id === active.id)
-        const newIndex = products.findIndex((item) => item.id === over.id)
+        const oldIndex = products.findIndex((product) => product.id === active.id)
+        const newIndex = products.findIndex((product) => product.id === over.id)
 
         // Create the new array with the updated order
         const updatedProducts = arrayMove([...products], oldIndex, newIndex)
@@ -246,7 +246,7 @@ export default function ProductManager() {
               />
             </div>
           <div>
-            <ImageUploader key={`new-item-uploader-${newProduct.image}`} value={newProduct.image || ""} onChange={(url) => setNewProduct({ ...newProduct, image: url })} />
+            <ImageUploader key={`new-product-uploader-${newProduct.image}`} value={newProduct.image || ""} onChange={(url) => setNewProduct({ ...newProduct, image: url })} />
           </div>
         </div>
         <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
@@ -280,7 +280,7 @@ export default function ProductManager() {
                           />
                         </div>
                         <div>
-                            <ImageUploader key={`new-item-uploader-${editForm.image}`} value={editForm.image} onChange={(url) => setNewProduct({ ...editForm, image: url })} />
+                            <ImageUploader key={`product-editer-${editForm.image}`} value={editForm.image} onChange={(url) => setEditForm({ ...editForm, image: url })} />
                         </div>
                       </div>
                       <div className="flex flex-row-reverse justify-end gap-2">
