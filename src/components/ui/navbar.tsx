@@ -36,13 +36,15 @@ export function Navbar() {
       <nav className="relative mx-auto flex max-w-7xl h-[3.75rem] sm:h-[4.5rem] items-center justify-between p-4">
         {/* Logo */}
         <div className="flex items-center text-amber-500">
-          <Link href="/" className="">
-            <Image
-              src={"/qqLogo.svg"}
-              alt="لوگوی قوشاقاف"
-              width={30}
-              height={12}
-            />
+          <Link href="/">
+            <div className="w-7.5">
+                <Image
+                src={"/qqLogo.svg"}
+                alt="لوگوی قوشاقاف"
+                width={30}
+                height={12}
+                />
+            </div>
           </Link>
         </div>
 
