@@ -35,5 +35,5 @@ const productSchema = new Schema<IProduct>(
   },
 )
 
-export const Product = mongoose.models?.MenuItem || model<IProduct>("MenuItem", productSchema)
+export const Product = mongoose.models?.Product || model<IProduct>("Product", productSchema)
 
