@@ -16,8 +16,6 @@ interface MenuItemModalProps {
 export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalProps) {
   if (!item) return null
 
-  // Determine if the item has a price list or a single price
-  const hasPriceList = item.priceList && item.priceList.length > 0
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -58,16 +56,6 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                     <DialogTitle>
                         {item.name}
                     </DialogTitle>
-                    {!hasPriceList && (
-                      <motion.span
-                        className="text-lg font-semibold text-amber-700"
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.2 }}
-                      >
-                        {item.price}
-                      </motion.span>
-                    )}
                   </div>
 
                   <motion.p
@@ -81,7 +69,6 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                 </div>
 
                 {/* Price List Section */}
-                {hasPriceList && (
                   <motion.div
                     className="space-y-2"
                     initial={{ opacity: 0, y: 10 }}
@@ -101,7 +88,6 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                       ))}
                     </div>
                   </motion.div>
-                )}
 
                 {item.ingredients && (
                   <motion.div
