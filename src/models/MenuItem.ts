@@ -12,8 +12,7 @@ export interface IMenuItem {
   name: string
   description?: string
   iconName?: string
-  price?: number // Make the single price optional
-  priceList?: IPriceListItem[] // Add the price list array
+  priceList: IPriceListItem[] // Add the price list array
   categoryId: mongoose.Types.ObjectId | string
   ingredients?: string
   image?: string
@@ -36,7 +35,6 @@ const menuItemSchema = new Schema<IMenuItem>(
     name: { type: String, required: true },
     description: { type: String},
     iconName: {type: String},
-    price: { type: Number }, // Make single price optional
     priceList: [priceListItemSchema], // Add the price list array
     categoryId: {
       type: Schema.Types.ObjectId,
