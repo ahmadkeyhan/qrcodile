@@ -4,6 +4,7 @@ import { Vazirmatn, Changa } from "next/font/google"
 import "./globals.css"
 import { ToastProvider } from "@/components/ui/toastContext"
 import { Providers } from "./providers"
+import { Navbar } from "@/components/ui/navbar"
 
 const vazir = Vazirmatn({
   subsets: ['arabic'],
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body>
         <Providers>
           <ToastProvider>
+            <Navbar />
             {children}
           </ToastProvider>
         </Providers>
