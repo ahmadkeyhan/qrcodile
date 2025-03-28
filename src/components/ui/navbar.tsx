@@ -1,22 +1,31 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import Image from "next/image"
+import { useState } from "react";
+import Link from "next/link";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { User, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 
 const navItems = [
   { name: "خانه", href: "/" },
   { name: "رستری", href: "/roastery" },
   { name: "رویدادها", href: "/event" },
   { name: "درباره", href: "/about" },
-]
+];
 
 export function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { data: session } = useSession();
+  const router = useRouter();
 
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/");
+  };
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50">
@@ -24,13 +33,16 @@ export function Navbar() {
       <div className="absolute inset-0 backdrop-blur-md shadow-sm bg-amber-50"></div>
 
       {/* Decorative gradient line */}
-      
-
       <nav className="relative mx-auto flex max-w-7xl h-[3.75rem] sm:h-[4.5rem] items-center justify-between p-4">
         {/* Logo */}
         <div className="flex items-center text-amber-500">
           <Link href="/" className="">
-            <Image src={'/qqLogo.svg'} alt="لوگوی قوشاقاف" width={30} height={12}/>
+            <Image
+              src={"/qqLogo.svg"}
+              alt="لوگوی قوشاقاف"
+              width={30}
+              height={12}
+            />
           </Link>
         </div>
 
@@ -49,8 +61,26 @@ export function Navbar() {
         </div>
 
         {/* Right side buttons */}
-        <div className="flex items-center gap-2">
-
+        <div className="flex items-center gap-1">
+        {session?.user && (
+          <>
+            <Link href={'/admin'}>
+                <div className="inline-flex flex-row-reverse gap-2 items-center justify-center text-sm border border-input h-9 px-3 rounded-md text-slate-600">
+                    {session.user.name}
+                    <User className="w-4 h-4" />
+                </div>
+            </Link>
+            <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            className="text-slate-700"
+            >
+            خروج
+            <LogOut className="w-4 h-4" />
+            </Button>
+          </>
+        )}
           {/* Mobile menu button */}
           <Button
             variant="ghost"
@@ -59,7 +89,10 @@ export function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <span className="sr-only">Open main menu</span>
-            <Menu className="h-5 w-5 group-hover:text-primary transition-colors duration-300" aria-hidden="true" />
+            <Menu
+              className="h-5 w-5 group-hover:text-primary transition-colors duration-300"
+              aria-hidden="true"
+            />
             <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-20 group-hover:bg-primary transition-opacity duration-300"></div>
           </Button>
         </div>
@@ -69,34 +102,40 @@ export function Navbar() {
       <div
         className={cn(
           "fixed inset-0 z-40 md:hidden transition-all duration-300 ease-in-out",
-          mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+          mobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
         )}
         style={{
-            transitionProperty: "opacity, visibility",
-            transitionDuration: "300ms",
-            visibility: mobileMenuOpen ? "visible" : "hidden",
-          }}
+          transitionProperty: "opacity, visibility",
+          transitionDuration: "300ms",
+          visibility: mobileMenuOpen ? "visible" : "hidden",
+        }}
       >
-        <div 
-            className="fixed inset-0 bg-amber-50/80 backdrop-blur-md transition-opacity duration-300" 
-            style={{
-                opacity: mobileMenuOpen ? 1 : 0,
-                transitionProperty: "opacity",
-                transitionDuration: "300ms",
-              }}
-            onClick={() => setMobileMenuOpen(false)}></div>
-        <div 
-            className="fixed inset-y-0 left-0 w-full max-w-xs bg-amber-50 backdrop-blur-md p-4 shadow-lg"
-            style={{
-                transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)",
-                transitionProperty: "transform",
-                transitionDuration: "300ms",
-              }}>
+        <div
+          className="fixed inset-0 bg-amber-50/80 backdrop-blur-md transition-opacity duration-300"
+          style={{
+            opacity: mobileMenuOpen ? 1 : 0,
+            transitionProperty: "opacity",
+            transitionDuration: "300ms",
+          }}
+          onClick={() => setMobileMenuOpen(false)}
+        ></div>
+        <div
+          className="fixed inset-y-0 left-0 w-full max-w-xs bg-amber-50 backdrop-blur-md p-4 shadow-lg"
+          style={{
+            transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)",
+            transitionProperty: "transform",
+            transitionDuration: "300ms",
+          }}
+        >
           <div className="flex items-center justify-between mb-8">
-            <Link href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-              <span className="font-bold bg-clip-text">
-                QQ
-              </span>
+            <Link
+              href="/"
+              className="flex items-center gap-2"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="font-bold bg-clip-text">QQ</span>
             </Link>
             <Button
               variant="ghost"
@@ -123,6 +162,5 @@ export function Navbar() {
         </div>
       </div>
     </header>
-  )
+  );
 }
-
