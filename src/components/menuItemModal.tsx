@@ -45,8 +45,6 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                     size="icon"
                     className="absolute top-1 right-1 rounded-full bg-white/50 backdrop-blur-sm hover:bg-white/90 text-slate-700"
                   >
-                    {/* <X className="h-4 w-4" />
-                    <span className="sr-only">Close</span> */}
                   </Button>
                 </DialogClose>
               </div>
@@ -54,13 +52,14 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
               <div className="p-6 space-y-4">
                 <div className="space-y-1">
                   <div className="flex justify-between items-start">
-                    <DialogTitle>
-                        {item.name}
+                    <DialogTitle className="flex w-full justify-between">
+                        <h2>{item.name}</h2>
+                        {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{formatCurrency(item.priceList[0].price)}</p>}
                     </DialogTitle>
                   </div>
 
                   <motion.p
-                    className="text-amber-700"
+                    className="text-amber-700 px-2"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.1 }}
@@ -70,37 +69,32 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                 </div>
 
                 {/* Price List Section */}
-                  <motion.div
+                  {item.priceList.length > 1 && <motion.div
                     className="space-y-2"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <h3 className="text-sm font-medium text-amber-800">Options & Pricing</h3>
-                    <div className="space-y-2">
+                    <div className="space-y-2 pr-2 text-amber-900">
                       {item.priceList.map((priceItem: IPriceListItem, index: number) => (
                         <div
                           key={index}
                           className="flex justify-between items-center py-1 border-b border-amber-100 last:border-0"
                         >
-                          <span className="text-amber-900">{priceItem.subItem}</span>
-                          <span className="font-medium text-amber-700">{formatCurrency(priceItem.price)}</span>
+                          <span>{priceItem.subItem}</span>
+                          <span className="font-semibold">{formatCurrency(priceItem.price)}</span>
                         </div>
                       ))}
                     </div>
-                  </motion.div>
+                  </motion.div>}
 
                 {item.ingredients && (
                   <motion.div
-                    className="space-y-2"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 text-sm font-medium">
-                       مواد اولیه
-                    </Badge>
-                    <p className="text-sm text-amber-600">{item.ingredients}</p>
+                    <p className="text-sm text-amber-600 px-2.5">{item.ingredients}</p>
                   </motion.div>
                 )}
 
