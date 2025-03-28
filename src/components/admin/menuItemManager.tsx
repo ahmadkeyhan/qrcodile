@@ -434,6 +434,23 @@ export default function MenuItemManager({isAdmin = true}) {
     }
   }
 
+   // Get the price range if there's a price list
+   const getPriceRange = (item: item) => {
+
+    if (item.priceList.length === 1) {
+      return item.priceList[0].price;
+    }
+
+    if (item.priceList.length > 1) {
+      const prices = item.priceList.map((p: priceListItem) => p.price);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+
+      if (minPrice === maxPrice) return minPrice;
+      return `${minPrice} - ${maxPrice}`;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {isAdmin && (
@@ -468,25 +485,25 @@ export default function MenuItemManager({isAdmin = true}) {
               />
             </div>
             <div className="sm:w-[calc(50%-0.5rem)]">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-sm font-medium">Price List</h4>
+                <div className="flex flex-row-reverse justify-between items-center mb-4">
+                  <h4 className="text-sm font-medium">لیست زیرآیتم‌ها</h4>
                   <Button type="button" variant="outline" size="sm" onClick={addPriceListItem} className="h-8">
                     <PlusCircle className="h-4 w-4 mr-1" />
-                    Add Variation
+                    ایجاد زیرآیتم‌
                   </Button>
                 </div>
 
                 {newItem.priceList.map((priceItem, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                  <div key={index} className="flex flex-row-reverse items-center gap-2">
                     <Input
-                      placeholder="Variation Name (e.g. Small, Medium, Large)"
+                      placeholder="نام زیرآیتم"
                       value={priceItem.subItem}
                       onChange={(e) => updatePriceListItem(index, "subItem", e.target.value)}
                       required
                       className="flex-1"
                     />
                     <Input
-                      placeholder="Price"
+                      placeholder="قیمت"
                       type="number"
                       step="0.01"
                       min="0"
@@ -643,8 +660,8 @@ export default function MenuItemManager({isAdmin = true}) {
                                           />
                                         </div>
                                         <div className="sm:col-span-2 space-y-3">
-                                            <div className="flex justify-between items-center">
-                                              <h4 className="text-sm font-medium">Price List</h4>
+                                            <div className="flex flex-row-reverse justify-between items-center">
+                                              <h4 className="text-sm font-medium">لیست زیرآیتم‌ها</h4>
                                               <Button
                                                 type="button"
                                                 variant="outline"
@@ -653,12 +670,12 @@ export default function MenuItemManager({isAdmin = true}) {
                                                 className="h-8"
                                               >
                                                 <PlusCircle className="h-4 w-4 mr-1" />
-                                                Add Variation
+                                                ایجاد زیرآیتم
                                               </Button>
                                             </div>
 
                                             {editForm.priceList.map((priceItem, index) => (
-                                              <div key={index} className="flex items-center gap-2">
+                                              <div key={index} className="flex flex-row-reverse items-center gap-2">
                                                 <Input
                                                   placeholder="Variation Name (e.g. Small, Medium, Large)"
                                                   value={priceItem.subItem}
@@ -779,10 +796,7 @@ export default function MenuItemManager({isAdmin = true}) {
                                           {item.priceList.length > 0 ? (
                                             <div className="text-right">
                                               <span className="font-semibold text-amber-700">
-                                                {item.priceList[0].price}
-                                                {item.priceList.length > 1 &&
-                                                  " - " +
-                                                    item.priceList[item.priceList.length - 1].price}
+                                                {getPriceRange(item)}
                                               </span>
                                             </div>
                                           ) : null}
@@ -791,8 +805,8 @@ export default function MenuItemManager({isAdmin = true}) {
                                         {item.ingredients && (
                                           <span className="text-xs text-slate-400">{item.ingredients}</span>
                                         )}
-                                        {item.priceList && item.priceList.length > 0 && (
-                                          <div className="mt-1 flex flex-wrap gap-1">
+                                        {item.priceList.length > 0 && (
+                                          <div className="mt-1 flex flex-row-reverse flex-wrap gap-1">
                                             {item.priceList.map((priceItem, index) => (
                                               <span
                                                 key={index}

@@ -113,7 +113,7 @@ export default function SortableMenuItem({ item }: SortableMenuItemProps) {
               <p className="text-sm text-slate-500 line-clamp-1">{item.description}</p>
             {/* Show price list items if available */}
               {item.priceList.length > 1 && (
-                  <div className="mt-1 flex flex-wrap gap-1">
+                  <div className="mt-1 flex flex-row-reverse flex-wrap gap-1">
                     {item.priceList.map((priceItem, index) => (
                       <span key={index} className="text-xs px-2 py-0.5 bg-amber-50 rounded-full text-amber-700">
                         {priceItem.subItem}
