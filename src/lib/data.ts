@@ -5,6 +5,7 @@ import { Category, ICategory } from "../models/Category";
 import { MenuItem, IMenuItem } from "../models/MenuItem";
 import { User, IUser } from "../models/User";
 import { MenuSettings, type IMenuSettings } from "../models/MenuSettings";
+import { Product, IProduct } from "@/models/Product";
 import mongoose from "mongoose";
 
 // Category CRUD operations
@@ -393,5 +394,102 @@ export async function updateMenuSettings(settingsData: Partial<IMenuSettings>) {
   } catch (error) {
     console.error("خطا:", error);
     throw new Error("Failed to update menu settings");
+  }
+}
+
+// Product CRUD operations
+export async function getAllProducts() {
+  try {
+    await connectToDatabase();
+    // Updated to sort by categoryId first, then order
+    const products = await Product.find().sort({ order: 1 });
+    return JSON.parse(JSON.stringify(products));
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw new Error("Failed to fetch products");
+  }
+}
+
+export async function getAvailableProducts() {
+  try {
+    await connectToDatabase();
+    const products = await Product.find({ available: true }).sort({ order: 1 });
+    return JSON.parse(JSON.stringify(products));
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw new Error("Failed to fetch products");
+  }
+}
+
+export async function createProduct(productData: IProduct) {
+  try {
+    await connectToDatabase();
+
+    if (productData.order === undefined) {
+      const lastProduct = await Product.findOne().sort({ order: -1 }).limit(1);
+      productData.order = lastProduct ? (lastProduct.order || 0) + 1 : 0;
+    }
+    const newProduct = new Product({
+      ...productData,
+      _id: new mongoose.Types.ObjectId(),
+    });
+    await newProduct.save();
+    return JSON.parse(JSON.stringify(newProduct));
+  } catch (error) {
+    console.error("Error creating product:", error);
+    throw new Error("Failed to create product");
+  }
+}
+
+export async function updateProduct(id: string, productData: IProduct) {
+  try {
+    await connectToDatabase();
+    const product = await Product.findByIdAndUpdate(
+      id,
+      { $set: productData },
+      { new: true, runValidators: true }
+    );
+
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    return JSON.parse(JSON.stringify(product));
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw new Error("Failed to update product");
+  }
+}
+
+export async function deleteProduct(id: string) {
+  try {
+    await connectToDatabase();
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      throw new Error("Product not found");
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw new Error("Failed to delete product");
+  }
+}
+
+export async function reorderProducts(orderedIds: string[]) {
+  try {
+    await connectToDatabase();
+
+    const updatePromises = orderedIds.map((id, index) => {
+      return Product.findByIdAndUpdate(id, { order: index });
+    });
+
+    await Promise.all(updatePromises);
+
+    return { success: true, message: "Products reordered successfully" };
+  } catch (error) {
+    console.error("Error reordering products:", error);
+    throw new Error("Failed to reorder products");
   }
 }
