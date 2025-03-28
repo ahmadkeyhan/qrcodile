@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("fa-IR", {
-    style: "currency",
-    currency: "IRR",
+    // style: "",
+    // currency: "IRR",
   }).format(amount)
 }

@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { IPriceListItem } from "@/models/MenuItem"
+import { formatCurrency } from "@/lib/utils"
 
 interface MenuItemModalProps {
   item: any
@@ -83,7 +84,7 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                           className="flex justify-between items-center py-1 border-b border-amber-100 last:border-0"
                         >
                           <span className="text-amber-900">{priceItem.subItem}</span>
-                          <span className="font-medium text-amber-700">{priceItem.price}</span>
+                          <span className="font-medium text-amber-700">{formatCurrency(priceItem.price)}</span>
                         </div>
                       ))}
                     </div>

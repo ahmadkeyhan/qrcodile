@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { formatCurrency } from "@/lib/utils";
 
 interface priceListItem {
   subItem: string;
@@ -28,22 +29,6 @@ export default function MenuItemCard({
   onClick: (item: item) => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
-
-  // Get the price range if there's a price list
-  const getPriceRange = () => {
-    if (item.priceList.length === 1) {
-      return item.priceList[0].price;
-    }
-
-    if (item.priceList.length > 1) {
-      const prices = item.priceList.map((p: priceListItem) => p.price);
-      const minPrice = Math.min(...prices);
-      const maxPrice = Math.max(...prices);
-
-      if (minPrice === maxPrice) return minPrice;
-      return `${minPrice} - ${maxPrice}`;
-    }
-  };
 
   return (
     <motion.div
@@ -72,7 +57,7 @@ export default function MenuItemCard({
       <div className="space-y-1 flex-1">
         <div className="flex justify-between items-start">
           <h2 className="font-bold text-base text-amber-900">{item.name}</h2>
-          {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{getPriceRange()}</p>}
+          {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{formatCurrency(item.priceList[0].price)}</p>}
         </div>
         {/* Show price list items */}
         {item.priceList.length > 1 && <div className="mt-1 flex flex-col gap-1">
@@ -82,7 +67,7 @@ export default function MenuItemCard({
               className="text-sm px-2 -ml-2 py-0.5 flex justify-between text-amber-900 border-b border-amber-100 last:border-0"
             >
               <p>{subItem.subItem}</p>
-              <p className="font-semibold">{subItem.price}</p>
+              <p className="font-semibold">{formatCurrency(subItem.price)}</p>
             </div>
           ))}
         </div>}
