@@ -41,6 +41,7 @@ import { deleteImage } from "@/lib/imageUtils"
 import AvailabilityToggle from "./availabilityToggle"
 import IconSelector from "./iconSelector"
 import * as LucideIcons from "lucide-react"
+import { formatCurrency } from "@/lib/utils"
 
 interface priceListItem {
   subItem: string;
@@ -813,25 +814,27 @@ export default function MenuItemManager({isAdmin = true}) {
                                             />
                                       </div>
                                       <div className="flex flex-col w-full gap-2">
-                                        <div className="flex flex-row-reverse gap-1 items-center">
-                                          {IconComponent && <IconComponent className="w-4 h-4" />}
-                                          <h3 className="font-medium">{item.name}</h3>
+                                        <div className="flex flex-row-reverse justify-between">
+                                          <div className="flex flex-row-reverse gap-1 items-center">
+                                            {IconComponent && <IconComponent className="w-4 h-4" />}
+                                            <h3 className="font-medium">{item.name}</h3>
+                                          </div>
+                                          {item.priceList.length === 1 && <p className="text-sm font-semibold">{formatCurrency(item.priceList[0].price)}</p>}
                                         </div>
                                         <p className="text-sm text-slate-500 text-right">{item.description}</p>
+                                        {item.priceList.length > 1 && <div className="mt-1 flex flex-col gap-1">
+                                          {item.priceList.map((subItem, index) => (
+                                            <div
+                                              key={index}
+                                              className="text-sm px-2 -ml-2 py-0.5 flex flex-row-reverse justify-between text-amber-900 border-b border-amber-100 last:border-0"
+                                            >
+                                              <p>{subItem.subItem}</p>
+                                              <p className="font-semibold">{formatCurrency(subItem.price)}</p>
+                                            </div>
+                                          ))}
+                                        </div>}
                                         {item.ingredients && (
                                           <span className="text-xs text-slate-400">{item.ingredients}</span>
-                                        )}
-                                        {item.priceList.length > 0 && (
-                                          <div className="mt-1 flex flex-row-reverse flex-wrap gap-1">
-                                            {item.priceList.map((priceItem, index) => (
-                                              <span
-                                                key={index}
-                                                className="text-xs px-2 py-0.5 bg-amber-50 rounded-full text-amber-700"
-                                              >
-                                                {priceItem.subItem}: {priceItem.price}
-                                              </span>
-                                            ))}
-                                          </div>
                                         )}
                                           <div className="flex flex-row-reverse justify-end gap-2">
                                             {isAdmin && (
