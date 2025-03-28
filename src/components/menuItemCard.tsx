@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { IMenuItem } from "@/models/MenuItem";
 
 interface priceListItem {
   subItem: string;
@@ -30,12 +29,8 @@ export default function MenuItemCard({
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
-
-
   // Get the price range if there's a price list
   const getPriceRange = () => {
-
-
     if (item.priceList.length === 1) {
       return item.priceList[0].price;
     }
@@ -76,9 +71,21 @@ export default function MenuItemCard({
 
       <div className="space-y-1 flex-1">
         <div className="flex justify-between items-start">
-          <h3 className="font-medium text-amber-900">{item.name}</h3>
-          <p className="font-semibold text-amber-700">{getPriceRange()}</p>
+          <h2 className="font-bold text-base text-amber-900">{item.name}</h2>
+          {item.priceList.length === 1 && <p className="font-semibold text-amber-900">{getPriceRange()}</p>}
         </div>
+        {/* Show price list items */}
+        {item.priceList.length > 1 && <div className="mt-1 flex flex-col gap-1">
+          {item.priceList.map((subItem, index) => (
+            <div
+              key={index}
+              className="text-sm px-2 -ml-2 py-0.5 flex justify-between text-amber-900 border-b border-amber-100 last:border-0"
+            >
+              <p>{subItem.subItem}</p>
+              <p className="font-semibold">{subItem.price}</p>
+            </div>
+          ))}
+        </div>}
         <p className="text-sm text-amber-700 line-clamp-2">
           {item.description}
         </p>
@@ -87,19 +94,6 @@ export default function MenuItemCard({
             {item.ingredients}
           </p>
         )}
-        {/* Show price list items if available */}
-        {item.priceList.length > 1 && (
-          <div className="mt-1 flex flex-wrap gap-1">
-            {item.priceList.map((priceItem, index) => (
-              <span
-                key={index}
-                className="text-xs px-2 py-0.5 bg-amber-50 rounded-full text-amber-700"
-              >
-                {priceItem.subItem}
-              </span>
-            ))}
-          </div>
-          )}
       </div>
     </motion.div>
   );
