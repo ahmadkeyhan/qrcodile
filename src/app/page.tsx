@@ -15,8 +15,8 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
-      <div className="container px-4 py-6 mx-auto max-w-3xl">
-        <header className="flex items-center justify-between mb-8">
+      <div className="container p-4 mx-auto max-w-3xl">
+        {/* <header className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-2">
             <Coffee className="w-8 h-8 text-amber-600" />
             <h1 className="text-lg font-bold text-amber-900">کافه کروکودیل</h1>
@@ -31,8 +31,10 @@ export default async function Home() {
               <UserCogIcon className="w-4 h-4" />
             </Button>
           </Link>
-        </header>
+        </header> */}
         <section className="space-y-6">
+          
+          <Suspense fallback={<MenuSkeleton />}>
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-amber-900 mb-2">
               {menuSettings.title}
@@ -41,7 +43,6 @@ export default async function Home() {
               {menuSettings.description}
             </p>
           </div>
-          <Suspense fallback={<MenuSkeleton />}>
             <MenuCategories />
           </Suspense>
         </section>
@@ -64,31 +65,13 @@ const spinnerVariants = {
 
 function MenuSkeleton() {
   return (
-    <div className="space-y-4">
-      {Array(3)
-        .fill(0)
-        .map((_, i) => (
-          <div key={i} className="border border-amber-100 rounded-lg overflow-hidden">
-            <div className="bg-amber-50 p-4">
-              <Skeleton className="h-6 w-40" />
-            </div>
-            <div className="p-4">
-              <div className="py-8 flex justify-center items-center">
-                <div className="flex space-x-3">
-
-                    <motion.div
-                      variants={spinnerVariants}
-                      initial="initial"
-                      animate="animate"
-                      className="w-3 h-3 rounded-full"
-                    >
-                      <Loader2 />
-                    </motion.div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-    </div>
+    <motion.div
+      variants={spinnerVariants}
+      initial="initial"
+      animate="animate"
+      className="w-3 h-3 rounded-full"
+    >
+      <Loader2 />
+    </motion.div>
   )
 }

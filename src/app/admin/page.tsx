@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import AdminHeader from "@/components/admin/adminHeader";
 import CategoryManager from "@/components/admin/categoryManager";
 import MenuItemManager from "@/components/admin/menuItemManager";
 import PasswordManager from "@/components/admin/passwordManager";
@@ -37,7 +36,6 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
       <div className="container px-4 py-6 mx-auto max-w-5xl">
-        <AdminHeader />
         <Tabs defaultValue="categories" className="space-y-6">
           <TabsList className="inline-flex w-full max-w-md mx-auto">
             {isAdmin && (
