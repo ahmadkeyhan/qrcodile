@@ -67,6 +67,7 @@ export default function MenuCategories() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(new Set())
   const [openCategories, setOpenCategories] = useState<string[]>([])
+  const [modalCategoryName,setModalCategoryName] = useState<string>('')
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -136,6 +137,9 @@ export default function MenuCategories() {
 
   const handleItemClick = (item: item) => {
     setSelectedItem(item);
+    categories.map((category) => {
+      if (category.id === item.categoryId) setModalCategoryName(category.name)
+    })
     setIsModalOpen(true);
   };
 
@@ -183,7 +187,7 @@ export default function MenuCategories() {
                   </div>
                 ) : items.length === 0 ? (
                   <div className="py-8 text-center text-amber-700">
-                    <p>No items available in this category</p>
+                    <p>آیتمی در این دسته‌بندی وجود ندارد.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
@@ -224,7 +228,7 @@ export default function MenuCategories() {
         </div>
       )}
 
-      <MenuItemModal item={selectedItem} isOpen={isModalOpen} onClose={handleCloseModal} />
+      <MenuItemModal item={selectedItem} categoryName={modalCategoryName} isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

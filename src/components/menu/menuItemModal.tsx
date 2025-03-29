@@ -20,19 +20,20 @@ interface item {
   description: string;
   iconName: string;
   priceList: priceListItem[];
-  categoryName: string;
+  // categoryName: string;
   ingredients: string;
   image: string;
   order: number;
 }
 
 interface MenuItemModalProps {
-  item: item
+  item: item | null
+  categoryName: string
   isOpen: boolean
   onClose: () => void
 }
 
-export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalProps) {
+export default function MenuItemModal({ item, categoryName, isOpen, onClose }: MenuItemModalProps) {
   if (!item) return null
 
   const IconComponent = item.iconName ? (LucideIcons as any)[item.iconName] : null
@@ -127,7 +128,7 @@ export default function MenuItemModal({ item, isOpen, onClose }: MenuItemModalPr
                   transition={{ delay: 0.3 }}
                 >
                   <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200">
-                    {item.categoryName || "آیتم منو"}
+                    {categoryName || "آیتم منو"}
                   </Badge>
                 </motion.div>
               </div>
