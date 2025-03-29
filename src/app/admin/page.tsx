@@ -12,6 +12,7 @@ import UserManager from "@/components/admin/user/userManager";
 import MenuSettingsManager from "@/components/admin/menu/menuSettingsManager";
 import ProductManager from "@/components/admin/product/productManager";
 import QRCodeGenerator from "@/components/admin/qrCode/qrCodeGenerator";
+import EventManager from "@/components/admin/event/eventManager";
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -70,6 +71,14 @@ export default function AdminPage() {
                 className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
               >
                 محصولات
+              </TabsTrigger>
+            )}
+            {isAdmin && (
+              <TabsTrigger
+                value="events"
+                className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
+              >
+                رویدادها
               </TabsTrigger>
             )}
             <TabsTrigger
@@ -138,6 +147,20 @@ export default function AdminPage() {
                 </h1>
                 <Suspense fallback={<ProductSkeleton />}>
                   <ProductManager />
+                </Suspense>
+              </TabsContent>
+            )}
+
+            {isAdmin && (
+              <TabsContent
+                value="events"
+                className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
+              >
+                <h1 className="text-xl font-semibold text-center text-amber-900">
+                  مدیریت رویدادها
+                </h1>
+                <Suspense fallback={<EventsSkeleton />}>
+                  <EventManager />
                 </Suspense>
               </TabsContent>
             )}
@@ -236,6 +259,21 @@ function ProductSkeleton() {
       <Skeleton className="h-40 w-full rounded-lg" />
     </div>
   );
+}
+
+function EventsSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-10 w-full max-w-md" />
+      <div className="grid gap-4">
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-lg" />
+          ))}
+      </div>
+    </div>
+  )
 }
 
 function UsersSkeleton() {
