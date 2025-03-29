@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/components/ui/toastContext";
-import ImageUploader from "./imageUploader";
+import ImageUploader from "@/components/admin/imageUploader";
 
 export default function QRCodeGenerator() {
   const [url, setUrl] = useState("");
