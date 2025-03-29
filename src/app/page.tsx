@@ -1,7 +1,7 @@
 
 import { Suspense } from "react";
 import MenuCategories from "@/components/menu/menuCategories";
-import { getMenuSettings } from "@/lib/data";
+import { getMenuSettings } from "@/lib/data/menuData";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 

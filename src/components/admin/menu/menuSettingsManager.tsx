@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textArea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/components/ui/toastContext";
-import { getMenuSettings, updateMenuSettings } from "@/lib/data";
+import { getMenuSettings, updateMenuSettings } from "@/lib/data/menuData";
 
 export default function MenuSettingsManager() {
   const [settings, setSettings] = useState({

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { updateMenuItem } from "@/lib/data"
+import { updateMenuItem } from "@/lib/data/itemData"
 import { useToast } from "@/components/ui/toastContext"
 import { IMenuItem } from "@/models/MenuItem"
 

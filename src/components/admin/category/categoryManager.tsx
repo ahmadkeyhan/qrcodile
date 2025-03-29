@@ -29,7 +29,7 @@ import {
   updateCategory, 
   deleteCategory, 
   reorderCategories 
-} from "@/lib/data"
+} from "@/lib/data/categoryData"
 import { useToast } from "@/components/ui/toastContext"
 import SortableCategoryItem from "./sortableCategoryItem"
 

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getCategories, getCategoryItems } from "@/lib/data";
+import { getCategories } from "@/lib/data/categoryData";
+import { getCategoryItems } from "@/lib/data/itemData";
 import MenuItemCard from "./menuItemCard";
 import MenuItemModal from "./menuItemModal";
 import * as LucideIcons from "lucide-react";

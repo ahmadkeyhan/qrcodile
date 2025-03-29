@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getAllProducts } from "@/lib/data";
+import { getAllProducts } from "@/lib/data/productData";
 import ProductCard from './productCard'
 import { IProduct } from "@/models/Product";
 

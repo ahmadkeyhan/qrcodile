@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/components/ui/toastContext"
-import { getUsers, createUser, updateUser, deleteUser } from "@/lib/data"
+import { getUsers, createUser, updateUser, deleteUser } from "@/lib/data/userData"
 
 type User = {
   id: string

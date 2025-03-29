@@ -25,13 +25,13 @@ import { Textarea } from "@/components/ui/textArea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { 
-  getCategories, 
   getMenuItems, 
   createMenuItem, 
   updateMenuItem, 
   deleteMenuItem,
   reorderMenuItems
-} from "@/lib/data"
+} from "@/lib/data/itemData"
+import { getCategories } from "@/lib/data/categoryData"
 import { useToast } from "@/components/ui/toastContext"
 
 import ImageUploader from "../imageUploader"

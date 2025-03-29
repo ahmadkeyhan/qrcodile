@@ -29,7 +29,7 @@ import {
     updateProduct,
     deleteProduct,
     reorderProducts
-} from "@/lib/data"
+} from "@/lib/data/productData"
 import { useToast } from "@/components/ui/toastContext"
 import SortableProduct from "./sortableProduct"
 import { IProduct } from "@/models/Product"
