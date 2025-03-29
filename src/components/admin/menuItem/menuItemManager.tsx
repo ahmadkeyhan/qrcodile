@@ -34,12 +34,12 @@ import {
 } from "@/lib/data"
 import { useToast } from "@/components/ui/toastContext"
 
-import ImageUploader from "./imageUploader"
+import ImageUploader from "../imageUploader"
 import Image from "next/image"
 import SortableMenuItem from "./sortableMenuItem"
 import { deleteImage } from "@/lib/imageUtils"
 import AvailabilityToggle from "./availabilityToggle"
-import IconSelector from "./iconSelector"
+import IconSelector from "../iconSelector"
 import * as LucideIcons from "lucide-react"
 import { formatCurrency } from "@/lib/utils"
 

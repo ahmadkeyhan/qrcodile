@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import CategoryManager from "@/components/admin/categoryManager";
-import MenuItemManager from "@/components/admin/menuItemManager";
-import PasswordManager from "@/components/admin/passwordManager";
-import UserManager from "@/components/admin/userManager";
-import MenuSettingsManager from "@/components/admin/menuSettingsManager";
+import CategoryManager from "@/components/admin/category/categoryManager";
+import MenuItemManager from "@/components/admin/menuItem/menuItemManager";
+import PasswordManager from "@/components/admin/user/passwordManager";
+import UserManager from "@/components/admin/user/userManager";
+import MenuSettingsManager from "@/components/admin/menu/menuSettingsManager";
 import ProductManager from "@/components/admin/product/productManager";
-import QRCodeGenerator from "@/components/admin/qrCodeGenerator";
+import QRCodeGenerator from "@/components/admin/qrCode/qrCodeGenerator";
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
