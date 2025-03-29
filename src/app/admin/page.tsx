@@ -160,7 +160,7 @@ export default function AdminPage() {
                 value="qr"
                 className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
               >
-                <h1 className="text-xl font-semibold text-amber-900">
+                <h1 className="text-xl font-semibold text-center text-amber-900">
                   ایجاد کد کیوآر
                 </h1>
                 <Suspense fallback={<QRCodeSkeleton />}>
