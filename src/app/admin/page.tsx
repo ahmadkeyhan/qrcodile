@@ -37,18 +37,62 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
       <div className="container px-4 py-6 mx-auto max-w-6xl">
-        <Tabs defaultValue="categories" className="w-full flex flex-col lg:flex-row-reverse gap-6">
-          <TabsList className="flex flex-wrap lg:flex-col lg:justify-start h-auto lg:h-screen w-full lg:w-48 bg-amber-100 p-1 lg:p-2 lg:shrink-0 rounded-lg">
-            {isAdmin && <TabsTrigger value="categories" className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1">دسته‌بندی‌ها</TabsTrigger>}
-            <TabsTrigger value="items" className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1">آیتم‌ها</TabsTrigger>
-            {isAdmin && <TabsTrigger value="menu" className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1">منو</TabsTrigger>}
-            {isAdmin && <TabsTrigger value="products" className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1">محصولات</TabsTrigger>}
-            <TabsTrigger value="users" className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1">اکانت‌ها</TabsTrigger>
-            {isAdmin && <TabsTrigger value="qr" className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1">کیوآر</TabsTrigger>}
+        <Tabs
+          defaultValue="categories"
+          className="w-full flex flex-col lg:flex-row-reverse gap-6"
+        >
+          <TabsList className="flex flex-wrap gap-2 lg:flex-col lg:justify-start h-auto lg:h-[500px] w-full lg:w-48 bg-amber-100 p-1 lg:p-2 lg:shrink-0 rounded-lg">
+            {isAdmin && (
+              <TabsTrigger
+                value="categories"
+                className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
+              >
+                دسته‌بندی‌ها
+              </TabsTrigger>
+            )}
+            <TabsTrigger
+              value="items"
+              className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
+            >
+              آیتم‌ها
+            </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger
+                value="menu"
+                className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
+              >
+                منو
+              </TabsTrigger>
+            )}
+            {isAdmin && (
+              <TabsTrigger
+                value="products"
+                className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
+              >
+                محصولات
+              </TabsTrigger>
+            )}
+            <TabsTrigger
+              value="users"
+              className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
+            >
+              اکانت‌ها
+            </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger
+                value="qr"
+                className="flex-grow lg:flex-grow-0 lg:justify-end lg:w-full lg:mb-1"
+              >
+                کیوآر
+              </TabsTrigger>
+            )}
           </TabsList>
           <div className="flex-1">
             {isAdmin && (
-              <TabsContent value="categories" className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block">
+              <TabsContent
+                value="categories"
+                className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
+              >
                 <h1 className="text-xl font-semibold text-center text-amber-900">
                   مدیریت دسته‌بندی‌ها
                 </h1>
@@ -58,7 +102,10 @@ export default function AdminPage() {
               </TabsContent>
             )}
 
-            <TabsContent value="items" className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block">
+            <TabsContent
+              value="items"
+              className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
+            >
               <h1 className="text-xl font-semibold text-center text-amber-900">
                 مدیریت آیتم‌ها
               </h1>
@@ -68,7 +115,10 @@ export default function AdminPage() {
             </TabsContent>
 
             {isAdmin && (
-              <TabsContent value="menu" className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block">
+              <TabsContent
+                value="menu"
+                className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
+              >
                 <h1 className="text-xl font-semibold text-center text-amber-900">
                   تنظیمات منو
                 </h1>
@@ -79,7 +129,10 @@ export default function AdminPage() {
             )}
 
             {isAdmin && (
-              <TabsContent value="products" className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block">
+              <TabsContent
+                value="products"
+                className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
+              >
                 <h1 className="text-xl font-semibold text-center text-amber-900">
                   مدیریت محصولات
                 </h1>
@@ -89,9 +142,12 @@ export default function AdminPage() {
               </TabsContent>
             )}
 
-            <TabsContent value="users" className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block">
+            <TabsContent
+              value="users"
+              className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
+            >
               <h1 className="text-xl font-semibold text-center text-amber-900">
-                {isAdmin? "مدیریت اکانت‌ها" : "مدیریت اکانت"}
+                {isAdmin ? "مدیریت اکانت‌ها" : "مدیریت اکانت"}
               </h1>
               <Suspense fallback={<UsersSkeleton />}>
                 <PasswordManager />
@@ -100,8 +156,13 @@ export default function AdminPage() {
             </TabsContent>
 
             {isAdmin && (
-              <TabsContent value="qr" className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block">
-                <h1 className="text-xl font-semibold text-amber-900">ایجاد کد کیوآر</h1>
+              <TabsContent
+                value="qr"
+                className="space-y-6 mt-6 lg:mt-0 data-[state=active]:block"
+              >
+                <h1 className="text-xl font-semibold text-amber-900">
+                  ایجاد کد کیوآر
+                </h1>
                 <Suspense fallback={<QRCodeSkeleton />}>
                   <QRCodeGenerator />
                 </Suspense>
@@ -198,5 +259,5 @@ function QRCodeSkeleton() {
       <Skeleton className="h-[400px] rounded-lg" />
       <Skeleton className="h-[400px] rounded-lg" />
     </div>
-  )
+  );
 }
